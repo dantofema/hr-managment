@@ -23,8 +23,9 @@ class EmployeeRepository extends ServiceEntityRepository implements EmployeeRepo
 
     public function save(Employee $employee): void
     {
-        $this->_em->persist($employee);
-        $this->_em->flush();
+        $em = $this->getEntityManager();
+        $em->persist($employee);
+        $em->flush();
     }
 
     public function findById(EmployeeId $id): ?Employee
@@ -65,4 +66,3 @@ class EmployeeRepository extends ServiceEntityRepository implements EmployeeRepo
         return $qb->getQuery()->getResult();
     }
 }
-
