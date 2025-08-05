@@ -15,4 +15,4 @@
 ###< phpunit/phpunit ###
 
 .idea
-requests.http
+http
