@@ -3,8 +3,9 @@
 namespace App\Employee\Application\Handler\DeleteEmployee;
 
 use App\Employee\Application\Command\DeleteEmployee\DeleteEmployeeCommand;
-use App\Employee\Domain\Repository\EmployeeRepositoryInterface;
 use App\Employee\Domain\Exception\EmployeeNotFoundException;
+use App\Employee\Domain\Repository\EmployeeRepositoryInterface;
+use App\Employee\Domain\ValueObject\EmployeeId;
 
 class DeleteEmployeeHandler
 {
@@ -17,7 +18,8 @@ class DeleteEmployeeHandler
 
     public function __invoke(DeleteEmployeeCommand $command): void
     {
-        $employee = $this->employeeRepository->findById($command->getId());
+        $employeeId = EmployeeId::fromString($command->getId());
+        $employee = $this->employeeRepository->findById($employeeId);
         if (!$employee) {
             throw new EmployeeNotFoundException();
         }

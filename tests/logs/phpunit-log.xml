@@ -1,30 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="/home/alejandro/projects/hr-managment/phpunit.dist.xml" tests="3" assertions="1" errors="2" failures="1" skipped="0" time="0.820882">
-    <testsuite name="Project Test Suite" tests="3" assertions="1" errors="2" failures="1" skipped="0" time="0.820882">
-      <testsuite name="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.002589">
-        <testcase name="testDeleteEmployeeSuccess" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="13" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="0" time="0.002327">
-          <error type="PHPUnit\Framework\MockObject\IncompatibleReturnValueException">App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest::testDeleteEmployeeSuccess
-PHPUnit\Framework\MockObject\IncompatibleReturnValueException: Method findById may not return value of type MockObject_stdClass_3fbaf516, its declared return type is "?App\Employee\Domain\Entity\Employee"
-
-/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php:21</error>
-        </testcase>
-        <testcase name="testDeleteEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="31" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="0" time="0.000262">
-          <error type="PHPUnit\Framework\MockObject\MethodCannotBeConfiguredException">App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest::testDeleteEmployeeNotFound
-PHPUnit\Framework\MockObject\MethodCannotBeConfiguredException: Trying to configure method "delete" which cannot be configured because it does not exist, has not been specified, is final, or is static
-
-/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php:40</error>
-        </testcase>
+  <testsuite name="/home/alejandro/projects/hr-managment/phpunit.dist.xml" tests="7" assertions="26" errors="0" failures="0" skipped="0" time="0.006898">
+    <testsuite name="Project Test Suite" tests="7" assertions="26" errors="0" failures="0" skipped="0" time="0.006898">
+      <testsuite name="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" tests="2" assertions="6" errors="0" failures="0" skipped="0" time="0.004988">
+        <testcase name="testDeleteEmployeeSuccess" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="15" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="3" time="0.004621"/>
+        <testcase name="testDeleteEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="35" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="3" time="0.000367"/>
       </testsuite>
-      <testsuite name="App\Tests\Employee\Infrastructure\Controller\DeleteEmployeeControllerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Infrastructure/Controller/DeleteEmployeeControllerTest.php" tests="1" assertions="1" errors="0" failures="1" skipped="0" time="0.818293">
-        <testcase name="testDeleteEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Infrastructure/Controller/DeleteEmployeeControllerTest.php" line="10" class="App\Tests\Employee\Infrastructure\Controller\DeleteEmployeeControllerTest" classname="App.Tests.Employee.Infrastructure.Controller.DeleteEmployeeControllerTest" assertions="1" time="0.818293">
-          <failure type="PHPUnit\Framework\ExpectationFailedException">App\Tests\Employee\Infrastructure\Controller\DeleteEmployeeControllerTest::testDeleteEmployeeNotFound
-Failed asserting that 500 matches expected 404.
-
-/home/alejandro/projects/hr-managment/tests/Employee/Infrastructure/Controller/DeleteEmployeeControllerTest.php:14</failure>
-          <system-out>Uncaught PHP Exception InvalidArgumentException: "The controller for URI "/employees/non-existent-id" is not callable: Controller "App\Employee\Infrastructure\Controller\DeleteEmployeeController" cannot be fetched from the container because it is private. Did you forget to tag the service with "controller.service_arguments"?" at ControllerResolver.php line 97
-</system-out>
-        </testcase>
+      <testsuite name="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" tests="5" assertions="20" errors="0" failures="0" skipped="0" time="0.001910">
+        <testcase name="testUpdateEmployeeSuccess" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="29" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="8" time="0.001073"/>
+        <testcase name="testUpdateEmployeePartialUpdate" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="76" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="4" time="0.000244"/>
+        <testcase name="testUpdateEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="107" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="4" time="0.000184"/>
+        <testcase name="testUpdateEmployeeWithInvalidEmail" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="132" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="2" time="0.000231"/>
+        <testcase name="testUpdateEmployeeWithInvalidName" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="154" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="2" time="0.000178"/>
       </testsuite>
     </testsuite>
   </testsuite>

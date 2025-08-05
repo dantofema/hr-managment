@@ -65,4 +65,11 @@ class EmployeeRepository extends ServiceEntityRepository implements EmployeeRepo
 
         return $qb->getQuery()->getResult();
     }
+
+    public function delete(Employee $employee): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($employee);
+        $em->flush();
+    }
 }

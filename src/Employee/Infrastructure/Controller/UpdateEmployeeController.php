@@ -129,8 +129,8 @@ final class UpdateEmployeeController extends AbstractController
         }
 
         // Validate input data
-        $constraints = new Assert\Collection([
-            'fields' => [
+        $constraints = new Assert\Collection(
+            fields: [
                 'name' => new Assert\Optional([
                     new Assert\NotBlank(),
                     new Assert\Length(min: 2, max: 100),
@@ -148,8 +148,8 @@ final class UpdateEmployeeController extends AbstractController
                     new Assert\Choice(choices: array_column(Role::cases(), 'value')),
                 ]),
             ],
-            'allowExtraFields' => false,
-        ]);
+            allowExtraFields: false
+        );
 
         $violations = $this->validator->validate($data, $constraints);
 

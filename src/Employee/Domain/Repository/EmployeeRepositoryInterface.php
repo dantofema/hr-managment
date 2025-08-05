@@ -24,5 +24,6 @@ interface EmployeeRepositoryInterface
         int $limit,
         array $filters
     ): array;
-}
 
+    public function delete(Employee $employee): void;
+}
