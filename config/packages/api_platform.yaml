@@ -1,7 +1,17 @@
 api_platform:
-    title: Hello API Platform
+    title: HR Management API
+    description: 'API for Human Resources Management System'
     version: 1.0.0
+    openapi:
+        contact:
+            name: HR Management Team
+        license:
+            name: Proprietary
     defaults:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+    docs_formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']
