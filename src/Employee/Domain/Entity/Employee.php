@@ -86,6 +86,26 @@ class Employee
         $this->status = $newStatus;
     }
 
+    public function changeName(EmployeeName $name): void
+    {
+        $this->name = (string) $name;
+    }
+
+    public function changeEmail(Email $email): void
+    {
+        $this->email = (string) $email;
+    }
+
+    public function changeDepartment(Department $department): void
+    {
+        $this->department = $department;
+    }
+
+    public function changeRole(Role $role): void
+    {
+        $this->role = $role;
+    }
+
     public function isActive(): bool
     {
         return $this->status === EmployeeStatus::ACTIVE;
