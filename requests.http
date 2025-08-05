@@ -1,0 +1,18 @@
+### Crear un empleado
+POST http://localhost:8000/api/v1/employees
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "jhon.doe@email.com",
+  "department": "HR",
+  "role": "Manager"
+}
+
+### Cambiar estado de un empleado a activo
+PATCH http://localhost:8000/api/v1/employees/bd42da37-d26b-4061-bfaf-5af9bd05724c/status
+Content-Type: application/json
+
+{
+  "status": "INACTIVE"
+}
