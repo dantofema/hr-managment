@@ -2,12 +2,12 @@
 
 namespace App\Tests\Employee\Application\Handler\DeleteEmployee;
 
-use App\Employee\Application\Command\DeleteEmployee\DeleteEmployeeCommand;
-use App\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandler;
-use App\Employee\Domain\Entity\Employee;
-use App\Employee\Domain\Exception\EmployeeNotFoundException;
-use App\Employee\Domain\Repository\EmployeeRepositoryInterface;
-use App\Employee\Domain\ValueObject\EmployeeId;
+use App\Application\Employee\Command\DeleteEmployee\DeleteEmployeeCommand;
+use App\Application\Employee\Handler\DeleteEmployee\DeleteEmployeeHandler;
+use App\Domain\Employee\Entity\Employee;
+use App\Domain\Employee\Exception\EmployeeNotFoundException;
+use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
+use App\Domain\Employee\ValueObject\EmployeeId;
 use PHPUnit\Framework\TestCase;
 
 class DeleteEmployeeHandlerTest extends TestCase

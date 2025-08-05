@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Employee\Handler;
 
-use App\Employee\Application\Command\UpdateEmployee\UpdateEmployeeCommand;
+use App\Application\Employee\Command\UpdateEmployee\UpdateEmployeeCommand;
 use App\Domain\Employee\Exception\EmployeeNotFoundException;
 use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
 use App\Domain\Employee\ValueObject\Email;

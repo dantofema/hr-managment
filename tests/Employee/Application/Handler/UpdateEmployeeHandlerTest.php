@@ -2,16 +2,18 @@
 
 namespace App\Tests\Employee\Application\Handler;
 
-use App\Employee\Application\Command\UpdateEmployee\UpdateEmployeeCommand;
-use App\Employee\Application\Handler\UpdateEmployeeHandler;
-use App\Employee\Domain\Entity\Employee;
-use App\Employee\Domain\Exception\EmployeeNotFoundException;
-use App\Employee\Domain\Repository\EmployeeRepositoryInterface;
-use App\Employee\Domain\ValueObject\Department;
-use App\Employee\Domain\ValueObject\Email;
-use App\Employee\Domain\ValueObject\EmployeeId;
-use App\Employee\Domain\ValueObject\EmployeeName;
-use App\Employee\Domain\ValueObject\Role;
+use App\Application\Employee\Command\UpdateEmployee\UpdateEmployeeCommand;
+use App\Application\Employee\Handler\UpdateEmployeeHandler;
+use App\Domain\Employee\Entity\Employee;
+use App\Domain\Employee\Exception\EmployeeNotFoundException;
+use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
+use App\Domain\Employee\ValueObject\Department;
+use App\Domain\Employee\ValueObject\Email;
+use App\Domain\Employee\ValueObject\EmployeeId;
+use App\Domain\Employee\ValueObject\EmployeeName;
+use App\Domain\Employee\ValueObject\Role;
+use InvalidArgumentException;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -19,12 +21,6 @@ class UpdateEmployeeHandlerTest extends TestCase
 {
     private EmployeeRepositoryInterface|MockObject $repository;
     private UpdateEmployeeHandler $handler;
-
-    protected function setUp(): void
-    {
-        $this->repository = $this->createMock(EmployeeRepositoryInterface::class);
-        $this->handler = new UpdateEmployeeHandler($this->repository);
-    }
 
     public function testUpdateEmployeeSuccess(): void
     {
@@ -146,7 +142,7 @@ class UpdateEmployeeHandlerTest extends TestCase
             email: 'invalid-email'
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->handler->__invoke($command);
     }
@@ -168,8 +164,17 @@ class UpdateEmployeeHandlerTest extends TestCase
             name: 'A' // Too short
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->handler->__invoke($command);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp(): void
+    {
+        $this->repository = $this->createMock(EmployeeRepositoryInterface::class);
+        $this->handler = new UpdateEmployeeHandler($this->repository);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Application\Employee\Handler\DeleteEmployee;
 
-use App\Employee\Application\Command\DeleteEmployee\DeleteEmployeeCommand;
+use App\Application\Employee\Command\DeleteEmployee\DeleteEmployeeCommand;
 use App\Domain\Employee\Exception\EmployeeNotFoundException;
 use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
 use App\Domain\Employee\ValueObject\EmployeeId;
