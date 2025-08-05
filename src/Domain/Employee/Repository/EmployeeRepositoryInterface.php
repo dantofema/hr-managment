@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Employee\Domain\Repository;
+namespace App\Domain\Employee\Repository;
 
-use App\Employee\Domain\Entity\Employee;
-use App\Employee\Domain\ValueObject\Email;
-use App\Employee\Domain\ValueObject\EmployeeId;
+use App\Domain\Employee\Entity\Employee;
+use App\Domain\Employee\ValueObject\Email;
+use App\Domain\Employee\ValueObject\EmployeeId;
 
 interface EmployeeRepositoryInterface
 {

@@ -1,0 +1,601 @@
+[
+  {
+    "name": "Api",
+    "type": "directory",
+    "children": [
+      {
+        "name": "Controller",
+        "type": "directory",
+        "children": [
+          {
+            "name": "HomeController.php",
+            "type": "file"
+          },
+          {
+            "name": "PayrollController.php",
+            "type": "file"
+          },
+          {
+            "name": "SalaryController.php",
+            "type": "file"
+          }
+        ]
+      },
+      {
+        "name": "DTO",
+        "type": "directory",
+        "children": []
+      },
+      {
+        "name": "Validator",
+        "type": "directory",
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "ApiResource",
+    "type": "directory",
+    "children": [
+      {
+        "name": ".gitignore",
+        "type": "file"
+      },
+      {
+        "name": "Employee.php",
+        "type": "file"
+      }
+    ]
+  },
+  {
+    "name": "Application",
+    "type": "directory",
+    "children": [
+      {
+        "name": "Employee",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Command",
+            "type": "directory",
+            "children": [
+              {
+                "name": "ChangeEmployeeStatus",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "ChangeEmployeeStatusCommand.php",
+                    "type": "file"
+                  }
+                ]
+              },
+              {
+                "name": "ChangeSalary",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "CompensateAccountCreation",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "CompensateEmployeeCreation",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "CompensateEquipmentAssignment",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "CompensateOrientationScheduling",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "CreateEmployee",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "CreateEmployeeCommand.php",
+                    "type": "file"
+                  }
+                ]
+              },
+              {
+                "name": "DeleteEmployee",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "DeleteEmployeeCommand.php",
+                    "type": "file"
+                  }
+                ]
+              },
+              {
+                "name": "HireEmployee",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "TerminateEmployee",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "UpdateEmployee",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "UpdateEmployeeCommand.php",
+                    "type": "file"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Handler",
+            "type": "directory",
+            "children": [
+              {
+                "name": "ChangeEmployeeStatusHandler.php",
+                "type": "file"
+              },
+              {
+                "name": "CreateEmployeeHandler.php",
+                "type": "file"
+              },
+              {
+                "name": "DeleteEmployee",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "DeleteEmployeeHandler.php",
+                    "type": "file"
+                  }
+                ]
+              },
+              {
+                "name": "GetEmployeeByIdHandler.php",
+                "type": "file"
+              },
+              {
+                "name": "GetEmployeesHandler.php",
+                "type": "file"
+              },
+              {
+                "name": "Saga",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "UpdateEmployeeHandler.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Query",
+            "type": "directory",
+            "children": [
+              {
+                "name": "GetEmployeeByIdQuery.php",
+                "type": "file"
+              },
+              {
+                "name": "GetEmployeeDetails",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "GetEmployees",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "GetEmployeesQuery.php",
+                "type": "file"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Payroll",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Command",
+            "type": "directory",
+            "children": [
+              {
+                "name": "ApprovePayroll",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "CalculatePayrollCommand.php",
+                "type": "file"
+              },
+              {
+                "name": "CreateSalaryCommand.php",
+                "type": "file"
+              },
+              {
+                "name": "GeneratePayroll",
+                "type": "directory",
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "Handler",
+            "type": "directory",
+            "children": [
+              {
+                "name": "CalculatePayrollCommandHandler.php",
+                "type": "file"
+              },
+              {
+                "name": "CreateSalaryCommandHandler.php",
+                "type": "file"
+              },
+              {
+                "name": "GetPayrollsByEmployeeIdQueryHandler.php",
+                "type": "file"
+              },
+              {
+                "name": "GetSalaryByEmployeeIdQueryHandler.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Query",
+            "type": "directory",
+            "children": [
+              {
+                "name": "CalculateSalary",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "GetPayrolls",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "GetPayrollsByEmployeeIdQuery.php",
+                "type": "file"
+              },
+              {
+                "name": "GetSalaryByEmployeeIdQuery.php",
+                "type": "file"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Vacation",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Command",
+            "type": "directory",
+            "children": [
+              {
+                "name": "ApproveVacation",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "RequestVacation",
+                "type": "directory",
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "Query",
+            "type": "directory",
+            "children": [
+              {
+                "name": "GetAvailableDays",
+                "type": "directory",
+                "children": []
+              },
+              {
+                "name": "GetVacations",
+                "type": "directory",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "DataFixtures",
+    "type": "directory",
+    "children": [
+      {
+        "name": "EmployeeFixtures.php",
+        "type": "file"
+      }
+    ]
+  },
+  {
+    "name": "Domain",
+    "type": "directory",
+    "children": [
+      {
+        "name": "Employee",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Entity",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Employee.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Event",
+            "type": "directory",
+            "children": [
+              {
+                "name": "EmployeeCreated.php",
+                "type": "file"
+              },
+              {
+                "name": "EmployeeStatusChanged.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Exception",
+            "type": "directory",
+            "children": [
+              {
+                "name": "EmployeeNotFoundException.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Repository",
+            "type": "directory",
+            "children": [
+              {
+                "name": "EmployeeRepositoryInterface.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Saga",
+            "type": "directory",
+            "children": []
+          },
+          {
+            "name": "Service",
+            "type": "directory",
+            "children": []
+          },
+          {
+            "name": "ValueObject",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Department.php",
+                "type": "file"
+              },
+              {
+                "name": "Email.php",
+                "type": "file"
+              },
+              {
+                "name": "EmployeeId.php",
+                "type": "file"
+              },
+              {
+                "name": "EmployeeName.php",
+                "type": "file"
+              },
+              {
+                "name": "EmployeeStatus.php",
+                "type": "file"
+              },
+              {
+                "name": "Role.php",
+                "type": "file"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Payroll",
+        "type": "directory",
+        "children": [
+          {
+            "name": "Entity",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Payroll.php",
+                "type": "file"
+              },
+              {
+                "name": "Salary.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Event",
+            "type": "directory",
+            "children": [
+              {
+                "name": "PayrollCalculatedEvent.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "Repository",
+            "type": "directory",
+            "children": [
+              {
+                "name": "PayrollRepositoryInterface.php",
+                "type": "file"
+              },
+              {
+                "name": "SalaryRepositoryInterface.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "ValueObject",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Money.php",
+                "type": "file"
+              },
+              {
+                "name": "PayrollId.php",
+                "type": "file"
+              },
+              {
+                "name": "PayrollPeriod.php",
+                "type": "file"
+              }
+            ]
+          },
+          {
+            "name": "{Event}",
+            "type": "directory",
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Shared",
+        "type": "directory",
+        "children": [
+          {
+            "name": "DomainEvent",
+            "type": "directory",
+            "children": []
+          },
+          {
+            "name": "EventBus",
+            "type": "directory",
+            "children": []
+          },
+          {
+            "name": "ValueObject",
+            "type": "directory",
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Vacation",
+        "type": "directory",
+        "children": [
+          {
+            "name": "{Event}",
+            "type": "directory",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Entity",
+    "type": "directory",
+    "children": [
+      {
+        "name": ".gitignore",
+        "type": "file"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure",
+    "type": "directory",
+    "children": [
+      {
+        "name": "EventDispatcher",
+        "type": "directory",
+        "children": []
+      },
+      {
+        "name": "EventHandler",
+        "type": "directory",
+        "children": [
+          {
+            "name": "PayrollCalculatedEventHandler.php",
+            "type": "file"
+          }
+        ]
+      },
+      {
+        "name": "EventStore",
+        "type": "directory",
+        "children": []
+      },
+      {
+        "name": "External",
+        "type": "directory",
+        "children": []
+      },
+      {
+        "name": "Persistence",
+        "type": "directory",
+        "children": []
+      },
+      {
+        "name": "Repository",
+        "type": "directory",
+        "children": [
+          {
+            "name": "PayrollRepository.php",
+            "type": "file"
+          },
+          {
+            "name": "SalaryRepository.php",
+            "type": "file"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Kernel.php",
+    "type": "file"
+  },
+  {
+    "name": "Repository",
+    "type": "directory",
+    "children": [
+      {
+        "name": ".gitignore",
+        "type": "file"
+      }
+    ]
+  }
+]

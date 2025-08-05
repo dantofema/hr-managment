@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite --config assets/vite.config.js",
-    "build": "vite build --config assets/vite.config.js"
+    "dev": "vite --config assets/vite.config.mjs",
+    "build": "vite build --config assets/vite.config.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",

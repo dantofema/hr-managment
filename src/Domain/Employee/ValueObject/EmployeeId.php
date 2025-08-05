@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Employee\Domain\ValueObject;
+namespace App\Domain\Employee\ValueObject;
 
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
@@ -34,3 +34,4 @@ final readonly class EmployeeId
         return $this->value->equals($other->value);
     }
 }
+

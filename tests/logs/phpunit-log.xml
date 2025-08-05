@@ -1,17 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="/home/alejandro/projects/hr-managment/phpunit.dist.xml" tests="7" assertions="26" errors="0" failures="0" skipped="0" time="0.006898">
-    <testsuite name="Project Test Suite" tests="7" assertions="26" errors="0" failures="0" skipped="0" time="0.006898">
-      <testsuite name="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" tests="2" assertions="6" errors="0" failures="0" skipped="0" time="0.004988">
-        <testcase name="testDeleteEmployeeSuccess" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="15" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="3" time="0.004621"/>
-        <testcase name="testDeleteEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="35" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="3" time="0.000367"/>
+  <testsuite name="/home/alejandro/projects/hr-managment/phpunit.dist.xml" tests="7" assertions="0" errors="7" failures="0" skipped="0" time="0.001626">
+    <testsuite name="Project Test Suite" tests="7" assertions="0" errors="7" failures="0" skipped="0" time="0.001626">
+      <testsuite name="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.001626">
+        <testcase name="testDeleteEmployeeSuccess" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="15" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="0" time="0.001413">
+          <error type="Error">App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest::testDeleteEmployeeSuccess
+Error: Class "App\Employee\Domain\ValueObject\EmployeeId" not found
+
+/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php:19</error>
+        </testcase>
+        <testcase name="testDeleteEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php" line="35" class="App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.DeleteEmployee.DeleteEmployeeHandlerTest" assertions="0" time="0.000214">
+          <error type="Error">App\Tests\Employee\Application\Handler\DeleteEmployee\DeleteEmployeeHandlerTest::testDeleteEmployeeNotFound
+Error: Class "App\Employee\Domain\ValueObject\EmployeeId" not found
+
+/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/DeleteEmployee/DeleteEmployeeHandlerTest.php:39</error>
+        </testcase>
       </testsuite>
-      <testsuite name="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" tests="5" assertions="20" errors="0" failures="0" skipped="0" time="0.001910">
-        <testcase name="testUpdateEmployeeSuccess" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="29" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="8" time="0.001073"/>
-        <testcase name="testUpdateEmployeePartialUpdate" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="76" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="4" time="0.000244"/>
-        <testcase name="testUpdateEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="107" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="4" time="0.000184"/>
-        <testcase name="testUpdateEmployeeWithInvalidEmail" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="132" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="2" time="0.000231"/>
-        <testcase name="testUpdateEmployeeWithInvalidName" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="154" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="2" time="0.000178"/>
+      <testsuite name="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.000000">
+        <testcase name="testUpdateEmployeeSuccess" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="29" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="0" time="0.000000">
+          <error type="PHPUnit\Framework\MockObject\Generator\UnknownTypeException">App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest::testUpdateEmployeeSuccess
+PHPUnit\Framework\MockObject\Generator\UnknownTypeException: Class or interface "App\Employee\Domain\Repository\EmployeeRepositoryInterface" does not exist
+
+/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php:25</error>
+        </testcase>
+        <testcase name="testUpdateEmployeePartialUpdate" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="76" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="0" time="0.000000">
+          <error type="PHPUnit\Framework\MockObject\Generator\UnknownTypeException">App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest::testUpdateEmployeePartialUpdate
+PHPUnit\Framework\MockObject\Generator\UnknownTypeException: Class or interface "App\Employee\Domain\Repository\EmployeeRepositoryInterface" does not exist
+
+/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php:25</error>
+        </testcase>
+        <testcase name="testUpdateEmployeeNotFound" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="107" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="0" time="0.000000">
+          <error type="PHPUnit\Framework\MockObject\Generator\UnknownTypeException">App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest::testUpdateEmployeeNotFound
+PHPUnit\Framework\MockObject\Generator\UnknownTypeException: Class or interface "App\Employee\Domain\Repository\EmployeeRepositoryInterface" does not exist
+
+/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php:25</error>
+        </testcase>
+        <testcase name="testUpdateEmployeeWithInvalidEmail" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="132" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="0" time="0.000000">
+          <error type="PHPUnit\Framework\MockObject\Generator\UnknownTypeException">App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest::testUpdateEmployeeWithInvalidEmail
+PHPUnit\Framework\MockObject\Generator\UnknownTypeException: Class or interface "App\Employee\Domain\Repository\EmployeeRepositoryInterface" does not exist
+
+/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php:25</error>
+        </testcase>
+        <testcase name="testUpdateEmployeeWithInvalidName" file="/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php" line="154" class="App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest" classname="App.Tests.Employee.Application.Handler.UpdateEmployeeHandlerTest" assertions="0" time="0.000000">
+          <error type="PHPUnit\Framework\MockObject\Generator\UnknownTypeException">App\Tests\Employee\Application\Handler\UpdateEmployeeHandlerTest::testUpdateEmployeeWithInvalidName
+PHPUnit\Framework\MockObject\Generator\UnknownTypeException: Class or interface "App\Employee\Domain\Repository\EmployeeRepositoryInterface" does not exist
+
+/home/alejandro/projects/hr-managment/tests/Employee/Application/Handler/UpdateEmployeeHandlerTest.php:25</error>
+        </testcase>
       </testsuite>
     </testsuite>
   </testsuite>
