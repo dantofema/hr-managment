@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/compose.yaml">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/compose.yaml" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/Employee/Domain/ValueObject/Email.php">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/Employee/Domain/ValueObject/Email.php" />
+              <option name="updatedContent" value="&lt;?php&#10;&#10;declare(strict_types=1);&#10;&#10;namespace App\Employee\Domain\ValueObject;&#10;&#10;use Webmozart\Assert\Assert;&#10;&#10;final readonly class Email&#10;{&#10;    private function __construct(private string $value)&#10;    {&#10;    }&#10;&#10;    public static function fromString(string $value): self&#10;    {&#10;        Assert::email($value, 'Invalid email format.');&#10;        return new self($value);&#10;    }&#10;&#10;    public function __toString(): string&#10;    {&#10;        return $this-&gt;value;&#10;    }&#10;&#10;    public function equals(self $other): bool&#10;    {&#10;        return $this-&gt;value === $other-&gt;value;&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/Employee/Domain/ValueObject/EmployeeId.php">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/Employee/Domain/ValueObject/EmployeeId.php" />
+              <option name="updatedContent" value="&lt;?php&#10;&#10;declare(strict_types=1);&#10;&#10;namespace App\Employee\Domain\ValueObject;&#10;&#10;use Symfony\Component\Uid\Uuid;&#10;use Webmozart\Assert\Assert;&#10;&#10;final readonly class EmployeeId&#10;{&#10;    private function __construct(private Uuid $value)&#10;    {&#10;    }&#10;&#10;    public static function generate(): self&#10;    {&#10;        return new self(Uuid::v4());&#10;    }&#10;&#10;    public static function fromString(string $value): self&#10;    {&#10;        Assert::uuid($value, 'Invalid UUID format for EmployeeId.');&#10;        return new self(Uuid::fromString($value));&#10;    }&#10;&#10;    public function __toString(): string&#10;    {&#10;        return $this-&gt;value-&gt;toRfc4122();&#10;    }&#10;&#10;    public function equals(self $other): bool&#10;    {&#10;        return $this-&gt;value-&gt;equals($other-&gt;value);&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
