@@ -9,3 +9,9 @@ employee_controllers:
     path: ../src/Employee/Infrastructure/Controller/
     namespace: App\Employee\Infrastructure\Controller
   type: attribute
+
+payroll_controllers:
+  resource:
+    path: ../src/Payroll/Infrastructure/Controller/
+    namespace: App\Payroll\Infrastructure\Controller
+  type: attribute
