@@ -24,6 +24,12 @@ doctrine:
         dir: '%kernel.project_dir%/src/Domain/Employee/Entity'
         prefix: 'App\Domain\Employee\Entity'
         alias: App
+      Payroll:
+        type: attribute
+        is_bundle: false
+        dir: '%kernel.project_dir%/src/Domain/Payroll/Entity'
+        prefix: 'App\Domain\Payroll\Entity'
+        alias: Payroll
     controller_resolver:
       auto_mapping: false
 

@@ -7,6 +7,7 @@ namespace App\Api\Controller;
 use App\Application\Employee\Command\UpdateEmployee\UpdateEmployeeCommand;
 use App\Domain\Employee\ValueObject\Department;
 use App\Domain\Employee\ValueObject\Role;
+use App\Domain\Employee\ValueObject\Salary;
 use Exception;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,9 +25,9 @@ class UpdateEmployeeController extends AbstractController
     ) {
     }
 
-    #[Route('/api/v1/employees/{uuid}', name: 'update_employee', methods: ['PATCH'])]
+    #[Route('/api/v1/employees/{id}', name: 'update_employee', methods: ['PATCH'])]
     #[OA\Patch(
-        path: '/api/v1/employees/{uuid}',
+        path: '/api/v1/employees/{id}',
         description: 'Updates an existing employee with the provided information. All fields are optional for partial updates.',
         summary: 'Update an employee',
         requestBody: new OA\RequestBody(
@@ -62,6 +63,14 @@ class UpdateEmployeeController extends AbstractController
                         type: 'string',
                         enum: ['HR', 'Engineering', 'Marketing', 'Sales'],
                         example: 'HR'
+                    ),
+                    new OA\Property(
+                        property: 'salary',
+                        description: 'Employee salary',
+                        type: 'number',
+                        format: 'float',
+                        minimum: 0.01,
+                        example: 50000.00
                     )
                 ]
             )
@@ -69,7 +78,7 @@ class UpdateEmployeeController extends AbstractController
         tags: ['Employee'],
         parameters: [
             new OA\Parameter(
-                name: 'uuid',
+                name: 'id',
                 description: 'Employee UUID',
                 in: 'path',
                 required: true,
@@ -93,15 +102,15 @@ class UpdateEmployeeController extends AbstractController
             new OA\Response(response: 404, description: 'Employee not found')
         ]
     )]
-    public function __invoke(string $uuid, Request $request): JsonResponse
+    public function __invoke(string $id, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
         // Validate that at least one field is provided for update
         if (empty($data) || !array_intersect_key($data,
-                array_flip(['name', 'email', 'role', 'department']))) {
+                array_flip(['name', 'email', 'role', 'department', 'salary']))) {
             return new JsonResponse([
-                'error' => 'At least one field (name, email, role, department) must be provided for update'
+                'error' => 'At least one field (name, email, role, department, salary) must be provided for update'
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -111,6 +120,15 @@ class UpdateEmployeeController extends AbstractController
             return new JsonResponse([
                 'error' => 'Invalid email format'
             ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Validate salary if provided
+        if (isset($data['salary']) && !empty($data['salary'])) {
+            if (!is_numeric($data['salary']) || (float) $data['salary'] <= 0) {
+                return new JsonResponse([
+                    'error' => 'Salary must be a positive number'
+                ], Response::HTTP_BAD_REQUEST);
+            }
         }
 
         $department = null;
@@ -137,12 +155,24 @@ class UpdateEmployeeController extends AbstractController
             }
         }
 
+        $salary = null;
+        if (isset($data['salary']) && !empty($data['salary'])) {
+            try {
+                $salary = Salary::fromFloat((float) $data['salary']);
+            } catch (Exception $e) {
+                return new JsonResponse([
+                    'error' => 'Invalid salary: ' . $e->getMessage()
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        }
+
         $command = new UpdateEmployeeCommand(
-            $uuid,
+            $id,
             isset($data['name']) && !empty(trim($data['name'])) ? trim($data['name']) : null,
             isset($data['email']) && !empty(trim($data['email'])) ? trim($data['email']) : null,
             $department,
-            $role
+            $role,
+            $salary
         );
 
         try {
@@ -150,7 +180,7 @@ class UpdateEmployeeController extends AbstractController
 
             return new JsonResponse([
                 'message' => 'Employee updated successfully',
-                'employee_id' => $uuid
+                'employee_id' => $id
             ]);
         } catch (Exception $e) {
             return new JsonResponse([

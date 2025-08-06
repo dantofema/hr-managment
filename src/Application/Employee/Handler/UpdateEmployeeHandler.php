@@ -10,6 +10,7 @@ use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
 use App\Domain\Employee\ValueObject\Email;
 use App\Domain\Employee\ValueObject\EmployeeId;
 use App\Domain\Employee\ValueObject\EmployeeName;
+use App\Domain\Employee\ValueObject\Salary;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -45,6 +46,10 @@ final readonly class UpdateEmployeeHandler
 
         if ($command->role !== null) {
             $employee->changeRole($command->role);
+        }
+
+        if ($command->salary !== null) {
+            $employee->changeSalary($command->salary);
         }
 
         $this->employeeRepository->save($employee);

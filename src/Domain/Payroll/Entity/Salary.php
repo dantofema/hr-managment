@@ -20,10 +20,10 @@ class Salary
     private string $employeeId;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $baseSalary;
+    private string $baseSalary;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $bonus;
+    private string $bonus;
 
     #[ORM\Column(type: 'string', length: 3)]
     private string $currency;
@@ -49,8 +49,8 @@ class Salary
         }
 
         $this->employeeId = (string) $employeeId;
-        $this->baseSalary = $baseSalary->getAmount();
-        $this->bonus = $bonus->getAmount();
+        $this->baseSalary = (string) $baseSalary->getAmount();
+        $this->bonus = (string) $bonus->getAmount();
         $this->currency = $baseSalary->getCurrency();
         $this->role = $role;
         $this->effectiveDate = $effectiveDate ?? new DateTimeImmutable();
@@ -74,12 +74,12 @@ class Salary
 
     public function getBaseSalary(): Money
     {
-        return Money::fromFloat($this->baseSalary, $this->currency);
+        return Money::fromFloat((float) $this->baseSalary, $this->currency);
     }
 
     public function getBonus(): Money
     {
-        return Money::fromFloat($this->bonus, $this->currency);
+        return Money::fromFloat((float) $this->bonus, $this->currency);
     }
 
     public function getTotalSalary(): Money
@@ -108,7 +108,7 @@ class Salary
             throw new InvalidArgumentException('New base salary must have the same currency');
         }
 
-        $this->baseSalary = $newBaseSalary->getAmount();
+        $this->baseSalary = (string) $newBaseSalary->getAmount();
     }
 
     public function updateBonus(Money $newBonus): void
@@ -117,7 +117,7 @@ class Salary
             throw new InvalidArgumentException('New bonus must have the same currency');
         }
 
-        $this->bonus = $newBonus->getAmount();
+        $this->bonus = (string) $newBonus->getAmount();
     }
 
     public function updateRole(Role $newRole): void

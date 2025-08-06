@@ -10,6 +10,7 @@ use App\Domain\Employee\ValueObject\EmployeeId;
 use App\Domain\Employee\ValueObject\EmployeeName;
 use App\Domain\Employee\ValueObject\EmployeeStatus;
 use App\Domain\Employee\ValueObject\Role;
+use App\Domain\Employee\ValueObject\Salary;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -35,12 +36,16 @@ class Employee
     #[ORM\Column(type: 'string', length: 20, enumType: EmployeeStatus::class)]
     private EmployeeStatus $status;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: true)]
+    private ?string $salary;
+
     public function __construct(
         EmployeeId $id,
         EmployeeName $name,
         Email $email,
         Department $department,
-        Role $role
+        Role $role,
+        ?Salary $salary = null
     ) {
         $this->id = (string) $id;
         $this->name = (string) $name;
@@ -48,6 +53,7 @@ class Employee
         $this->department = $department;
         $this->role = $role;
         $this->status = EmployeeStatus::ACTIVE;
+        $this->salary = $salary !== null ? (string) $salary->toFloat() : null;
     }
 
     public function getId(): EmployeeId
@@ -106,13 +112,23 @@ class Employee
         $this->role = $role;
     }
 
+    public function getSalary(): ?Salary
+    {
+        return $this->salary !== null ? Salary::fromFloat((float) $this->salary) : null;
+    }
+
+    public function changeSalary(?Salary $salary): void
+    {
+        $this->salary = $salary !== null ? (string) $salary->toFloat() : null;
+    }
+
     public function isActive(): bool
     {
         return $this->status === EmployeeStatus::ACTIVE;
     }
 
     /**
-     * @return array{id: string, name: string, email: string, department: string, role: string, status: string}
+     * @return array{id: string, name: string, email: string, department: string, role: string, status: string, salary: ?float}
      */
     public function getFullInfo(): array
     {
@@ -123,6 +139,7 @@ class Employee
             'department' => $this->department->value,
             'role' => $this->role->value,
             'status' => $this->status->value,
+            'salary' => $this->salary,
         ];
     }
 }

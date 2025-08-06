@@ -23,22 +23,22 @@ class Payroll
     private string $employeeId;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $grossSalary;
+    private string $grossSalary;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $incomeTax;
+    private string $incomeTax;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $socialSecurity;
+    private string $socialSecurity;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $healthInsurance;
+    private string $healthInsurance;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $totalDeductions;
+    private string $totalDeductions;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $netSalary;
+    private string $netSalary;
 
     #[ORM\Column(type: 'string', length: 3)]
     private string $currency;
@@ -63,7 +63,7 @@ class Payroll
     ) {
         $this->id = (string) $id;
         $this->employeeId = (string) $employeeId;
-        $this->grossSalary = $grossSalary->getAmount();
+        $this->grossSalary = (string) $grossSalary->getAmount();
         $this->currency = $grossSalary->getCurrency();
         $this->periodStart = $period->getStartDate();
         $this->periodEnd = $period->getEndDate();
@@ -99,32 +99,32 @@ class Payroll
 
     public function getGrossSalary(): Money
     {
-        return Money::fromFloat($this->grossSalary, $this->currency);
+        return Money::fromFloat((float) $this->grossSalary, $this->currency);
     }
 
     public function getIncomeTax(): Money
     {
-        return Money::fromFloat($this->incomeTax, $this->currency);
+        return Money::fromFloat((float) $this->incomeTax, $this->currency);
     }
 
     public function getSocialSecurity(): Money
     {
-        return Money::fromFloat($this->socialSecurity, $this->currency);
+        return Money::fromFloat((float) $this->socialSecurity, $this->currency);
     }
 
     public function getHealthInsurance(): Money
     {
-        return Money::fromFloat($this->healthInsurance, $this->currency);
+        return Money::fromFloat((float) $this->healthInsurance, $this->currency);
     }
 
     public function getTotalDeductions(): Money
     {
-        return Money::fromFloat($this->totalDeductions, $this->currency);
+        return Money::fromFloat((float) $this->totalDeductions, $this->currency);
     }
 
     public function getNetSalary(): Money
     {
-        return Money::fromFloat($this->netSalary, $this->currency);
+        return Money::fromFloat((float) $this->netSalary, $this->currency);
     }
 
     public function getPeriod(): PayrollPeriod

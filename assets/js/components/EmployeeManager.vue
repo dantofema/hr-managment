@@ -351,8 +351,7 @@
       </div>
 
       <!-- Table -->
-      <div v-else
-           class="overflow-x-auto">
+      <div v-else class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
           <tr>
@@ -374,9 +373,7 @@
           </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="employee in paginatedEmployees"
-              :key="employee.id"
-              class="hover:bg-gray-50">
+          <tr v-for="employee in filteredEmployees" :key="employee.id" class="hover:bg-gray-50">
             <!-- Employee Info -->
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
@@ -440,128 +437,13 @@
         </table>
       </div>
 
-      <!-- Pagination Controls -->
-      <div v-if="totalPages > 1"
-           class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
-        <!-- Pagination Info -->
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-              :disabled="!paginationInfo.hasPreviousPage"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
-              @click="previousPage"
-          >
-            Anterior
-          </button>
-          <button
-              :disabled="!paginationInfo.hasNextPage"
-              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
-              @click="nextPage"
-          >
-            Siguiente
-          </button>
-        </div>
-
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              Mostrando
-              <span class="font-medium">{{ paginationInfo.start }}</span>
-              a
-              <span class="font-medium">{{ paginationInfo.end }}</span>
-              de
-              <span class="font-medium">{{ paginationInfo.total }}</span>
-              empleados
-            </p>
-          </div>
-
-          <div>
-            <nav aria-label="Pagination"
-                 class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <!-- Previous Button -->
-              <button
-                  :disabled="!paginationInfo.hasPreviousPage"
-                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300"
-                  @click="previousPage"
-              >
-                <svg class="h-5 w-5"
-                     fill="currentColor"
-                     viewBox="0 0 20 20">
-                  <path clip-rule="evenodd"
-                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                        fill-rule="evenodd"/>
-                </svg>
-              </button>
-
-              <!-- First page button (if not visible in range) -->
-              <template v-if="visiblePages[0] > 1">
-                <button
-                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    @click="goToFirstPage"
-                >
-                  1
-                </button>
-                <span v-if="visiblePages[0] > 2"
-                      class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                  ...
-                </span>
-              </template>
-
-              <!-- Page Numbers -->
-              <button
-                  v-for="page in visiblePages"
-                  :key="page"
-                  :class="[
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  page === currentPage
-                    ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                ]"
-                  @click="setCurrentPage(page)"
-              >
-                {{ page }}
-              </button>
-
-              <!-- Last page button (if not visible in range) -->
-              <template v-if="visiblePages[visiblePages.length - 1] < totalPages">
-                <span v-if="visiblePages[visiblePages.length - 1] < totalPages - 1"
-                      class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                  ...
-                </span>
-                <button
-                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    @click="goToLastPage"
-                >
-                  {{ totalPages }}
-                </button>
-              </template>
-
-              <!-- Next Button -->
-              <button
-                  :disabled="!paginationInfo.hasNextPage"
-                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300"
-                  @click="nextPage"
-              >
-                <svg class="h-5 w-5"
-                     fill="currentColor"
-                     viewBox="0 0 20 20">
-                  <path clip-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        fill-rule="evenodd"/>
-                </svg>
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Employee Modal -->
-    <EmployeeModal
-        :employee="selectedEmployee"
-        :is-open="isModalOpen"
-        @close="closeEmployeeModal"
-        @update-status="handleModalStatusUpdate"
-    />
+      <!-- Employee Modal -->
+      <EmployeeModal
+          :employee="selectedEmployee"
+          :is-open="isModalOpen"
+          @close="closeEmployeeModal"
+          @update-status="handleModalStatusUpdate"
+      />
   </div>
 </template>
 
@@ -612,31 +494,6 @@ const hasActiveFilters = computed(() => {
       employeeStore.selectedStatus || employeeStore.selectedRole);
 });
 
-// Pagination states
-const currentPage = computed(() => employeeStore.currentPage);
-const itemsPerPage = computed(() => employeeStore.itemsPerPage);
-const totalPages = computed(() => Math.ceil(filteredEmployees.value.length / itemsPerPage.value));
-const paginationInfo = computed(() => ({
-  total: filteredEmployees.value.length,
-  perPage: itemsPerPage.value,
-  currentPage: currentPage.value,
-  start: (currentPage.value - 1) * itemsPerPage.value + 1,
-  end: Math.min(currentPage.value * itemsPerPage.value, filteredEmployees.value.length),
-  hasPreviousPage: currentPage.value > 1,
-  hasNextPage: currentPage.value < totalPages.value
-}));
-const visiblePages = computed(() => {
-  const pages = [];
-  for (let i = 1; i <= totalPages.value; i++) {
-    if (i === 1 || i === totalPages.value || (i >= currentPage.value - 1 && i <= currentPage.value + 1)) {
-      pages.push(i);
-    } else if (i === currentPage.value - 2 || i === currentPage.value + 2) {
-      pages.push('...');
-    }
-  }
-  return pages;
-});
-
 // Methods
 const refreshEmployees = () => {
   employeeStore.fetchEmployees();
@@ -652,30 +509,6 @@ const clearAllFilters = () => {
 
 const setItemsPerPage = (value) => {
   employeeStore.setItemsPerPage(value);
-};
-
-const setCurrentPage = (value) => {
-  employeeStore.setCurrentPage(value);
-};
-
-const previousPage = () => {
-  if (paginationInfo.value.hasPreviousPage) {
-    employeeStore.setCurrentPage(currentPage.value - 1);
-  }
-};
-
-const nextPage = () => {
-  if (paginationInfo.value.hasNextPage) {
-    employeeStore.setCurrentPage(currentPage.value + 1);
-  }
-};
-
-const goToFirstPage = () => {
-  employeeStore.setCurrentPage(1);
-};
-
-const goToLastPage = () => {
-  employeeStore.setCurrentPage(totalPages.value);
 };
 
 const getInitials = (name) => {

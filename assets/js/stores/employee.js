@@ -19,7 +19,7 @@ export const useEmployeeStore = defineStore('employee', {
             this.loading = true;
             this.error = null;
             try {
-                const response = await fetch('/api/employees');
+                const response = await fetch('/api/v1/employees');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

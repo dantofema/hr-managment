@@ -30,6 +30,10 @@ use App\Domain\Employee\Entity\Employee as EmployeeEntity;
             uriTemplate: '/v1/employees/{id}/status',
             controller: 'App\Api\Controller\ChangeEmployeeStatusController'
         ),
+        new Patch(
+            uriTemplate: '/v1/employees/{id}',
+            controller: 'App\Api\Controller\UpdateEmployeeController'
+        ),
         new Delete(
             uriTemplate: '/v1/employees/{id}',
             controller: 'App\Api\Controller\DeleteEmployeeController'
@@ -44,7 +48,8 @@ class Employee
         public string $email,
         public string $department,
         public string $role,
-        public string $status
+        public string $status,
+        public ?float $salary = null
     ) {
     }
 
@@ -56,7 +61,8 @@ class Employee
             email: (string) $employee->getEmail(),
             department: $employee->getDepartment()->value,
             role: $employee->getRole()->value,
-            status: $employee->getStatus()->value
+            status: $employee->getStatus()->value,
+            salary: $employee->getSalary()?->toFloat()
         );
     }
 }
