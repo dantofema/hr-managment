@@ -24,7 +24,6 @@ class CreateEmployeeController extends AbstractController
     ) {
     }
 
-    #[Route('/api/v1/employees', name: 'create_employee', methods: ['POST'])]
     #[OA\Post(
         path: '/api/v1/employees',
         description: 'Creates a new employee with the provided information',

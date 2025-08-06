@@ -22,7 +22,6 @@ class ListEmployeesController extends AbstractController
     ) {
     }
 
-    #[Route('/api/v1/employees', name: 'list_employees', methods: ['GET'])]
     #[OA\Get(
         path: '/api/v1/employees',
         description: 'Retrieves a paginated list of employees with optional filtering',

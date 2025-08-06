@@ -9,13 +9,23 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Domain\Employee\Entity\Employee as EmployeeEntity;
 
 #[ApiResource(
     uriTemplate: '/v1/employees',
     operations: [
-        new GetCollection(),
-        new Get(uriTemplate: '/v1/employees/{id}'),
+        new GetCollection(
+            controller: 'App\Api\Controller\ListEmployeesController'
+        ),
+        new Get(
+            uriTemplate: '/v1/employees/{id}',
+            controller: 'App\Api\Controller\GetEmployeeController'
+        ),
+        new Post(
+            uriTemplate: '/v1/employees',
+            controller: 'App\Api\Controller\CreateEmployeeController'
+        ),
         new Patch(
             uriTemplate: '/v1/employees/{id}/status',
             controller: 'App\Api\Controller\ChangeEmployeeStatusController'
