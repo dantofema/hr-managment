@@ -182,18 +182,18 @@ class Payroll
         // Simple tax calculation logic
         // Income tax: 15% for amounts up to $50,000, 25% for amounts above
         $incomeTaxRate = $grossSalary->getAmount() <= 50000 ? 0.15 : 0.25;
-        $this->incomeTax = $grossSalary->getAmount() * $incomeTaxRate;
+        $this->incomeTax = (string) ($grossSalary->getAmount() * $incomeTaxRate);
 
         // Social Security: 6.2% of gross salary
-        $this->socialSecurity = $grossSalary->getAmount() * 0.062;
+        $this->socialSecurity = (string) ($grossSalary->getAmount() * 0.062);
 
         // Health Insurance: 2% of gross salary
-        $this->healthInsurance = $grossSalary->getAmount() * 0.02;
+        $this->healthInsurance = (string) ($grossSalary->getAmount() * 0.02);
 
         // Total deductions
-        $this->totalDeductions = $this->incomeTax + $this->socialSecurity + $this->healthInsurance;
+        $this->totalDeductions = (string) ((float) $this->incomeTax + (float) $this->socialSecurity + (float) $this->healthInsurance);
 
         // Net salary
-        $this->netSalary = $grossSalary->getAmount() - $this->totalDeductions;
+        $this->netSalary = (string) ($grossSalary->getAmount() - (float) $this->totalDeductions);
     }
 }
