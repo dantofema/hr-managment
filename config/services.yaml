@@ -20,19 +20,18 @@ services:
       - '../src/Entity/'
       - '../src/Kernel.php'
 
-  App\Employee\Domain\Repository\EmployeeRepositoryInterface:
-    alias: App\Employee\Infrastructure\Repository\EmployeeRepository
 
-  App\Employee\Infrastructure\Controller\DeleteEmployeeController:
-    public: true
-    tags: [ 'controller.service_arguments' ]
 
   # Payroll services
-  App\Payroll\Domain\Repository\SalaryRepositoryInterface:
-    alias: App\Payroll\Infrastructure\Repository\SalaryRepository
+  App\Domain\Payroll\Repository\SalaryRepositoryInterface:
+    alias: App\Infrastructure\Repository\SalaryRepository
 
-  App\Payroll\Domain\Repository\PayrollRepositoryInterface:
-    alias: App\Payroll\Infrastructure\Repository\PayrollRepository
+  App\Domain\Payroll\Repository\PayrollRepositoryInterface:
+    alias: App\Infrastructure\Repository\PayrollRepository
+
+  # Employee services
+  App\Domain\Employee\Repository\EmployeeRepositoryInterface:
+    alias: App\Infrastructure\Repository\EmployeeRepository
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

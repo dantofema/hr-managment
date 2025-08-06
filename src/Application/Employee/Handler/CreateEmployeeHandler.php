@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Employee\Handler;
 
-use App\Employee\Application\Command\CreateEmployee\CreateEmployeeCommand;
+use App\Application\Employee\Command\CreateEmployee\CreateEmployeeCommand;
 use App\Domain\Employee\Entity\Employee;
 use App\Domain\Employee\Event\EmployeeCreated;
 use App\Domain\Employee\Repository\EmployeeRepositoryInterface;

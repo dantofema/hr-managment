@@ -2,12 +2,12 @@
 
 namespace App\DataFixtures;
 
-use App\Employee\Domain\Entity\Employee;
-use App\Employee\Domain\ValueObject\Department;
-use App\Employee\Domain\ValueObject\Email;
-use App\Employee\Domain\ValueObject\EmployeeId;
-use App\Employee\Domain\ValueObject\EmployeeName;
-use App\Employee\Domain\ValueObject\Role;
+use App\Domain\Employee\Entity\Employee;
+use App\Domain\Employee\ValueObject\Department;
+use App\Domain\Employee\ValueObject\Email;
+use App\Domain\Employee\ValueObject\EmployeeId;
+use App\Domain\Employee\ValueObject\EmployeeName;
+use App\Domain\Employee\ValueObject\Role;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 

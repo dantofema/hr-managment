@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repository;
 
-use App\Employee\Domain\ValueObject\EmployeeId;
+use App\Domain\Employee\ValueObject\EmployeeId;
 use App\Domain\Payroll\Entity\Salary;
 use App\Domain\Payroll\Repository\SalaryRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;

@@ -8,6 +8,7 @@ use App\Application\Payroll\Command\CalculatePayrollCommand;
 use App\Application\Payroll\Query\GetPayrollsByEmployeeIdQuery;
 use App\Domain\Payroll\Repository\PayrollRepositoryInterface;
 use App\Domain\Payroll\ValueObject\PayrollId;
+use Exception;
 use InvalidArgumentException;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,16 +31,22 @@ class PayrollController extends AbstractController
     #[Route('/calculate', name: 'calculate', methods: ['POST'])]
     #[OA\Post(
         path: '/api/payroll/calculate',
-        summary: 'Calculate payroll for an employee',
         description: 'Calculates payroll including taxes and deductions for a specific employee and period',
+        summary: 'Calculate payroll for an employee',
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
                 required: ['employee_id'],
                 properties: [
-                    new OA\Property(property: 'employee_id', type: 'string', format: 'uuid', description: 'Employee UUID'),
-                    new OA\Property(property: 'period_start', type: 'string', format: 'date', description: 'Period start date (optional, defaults to current month)'),
-                    new OA\Property(property: 'period_end', type: 'string', format: 'date', description: 'Period end date (optional, defaults to current month)')
+                    new OA\Property(property: 'employee_id',
+                        description: 'Employee UUID', type: 'string',
+                        format: 'uuid'),
+                    new OA\Property(property: 'period_start',
+                        description: 'Period start date (optional, defaults to current month)',
+                        type: 'string', format: 'date'),
+                    new OA\Property(property: 'period_end',
+                        description: 'Period end date (optional, defaults to current month)',
+                        type: 'string', format: 'date')
                 ]
             )
         ),
@@ -55,7 +62,8 @@ class PayrollController extends AbstractController
                     ]
                 )
             ),
-            new OA\Response(response: 400, description: 'Bad request - validation error'),
+            new OA\Response(response: 400,
+                description: 'Bad request - validation error'),
             new OA\Response(response: 500, description: 'Internal server error')
         ]
     )]
@@ -63,9 +71,10 @@ class PayrollController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            
+
             if (!isset($data['employee_id'])) {
-                return $this->json(['error' => 'employee_id is required'], Response::HTTP_BAD_REQUEST);
+                return $this->json(['error' => 'employee_id is required'],
+                    Response::HTTP_BAD_REQUEST);
             }
 
             $command = new CalculatePayrollCommand(
@@ -84,24 +93,26 @@ class PayrollController extends AbstractController
             ], Response::HTTP_CREATED);
 
         } catch (InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => $e->getMessage()],
+                Response::HTTP_BAD_REQUEST);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'Internal server error'],
+                Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     #[Route('/employee/{employeeId}', name: 'get_by_employee', methods: ['GET'])]
     #[OA\Get(
         path: '/api/payroll/employee/{employeeId}',
-        summary: 'Get all payrolls for an employee',
         description: 'Retrieves all payroll records for a specific employee',
+        summary: 'Get all payrolls for an employee',
         tags: ['Payroll'],
         parameters: [
             new OA\Parameter(
                 name: 'employeeId',
+                description: 'Employee UUID',
                 in: 'path',
                 required: true,
-                description: 'Employee UUID',
                 schema: new OA\Schema(type: 'string', format: 'uuid')
             )
         ],
@@ -111,12 +122,15 @@ class PayrollController extends AbstractController
                 description: 'Employee payrolls retrieved successfully',
                 content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: 'employee_id', type: 'string'),
-                        new OA\Property(property: 'payrolls', type: 'array', items: new OA\Items(type: 'object'))
+                        new OA\Property(property: 'employee_id',
+                            type: 'string'),
+                        new OA\Property(property: 'payrolls', type: 'array',
+                            items: new OA\Items(type: 'object'))
                     ]
                 )
             ),
-            new OA\Response(response: 400, description: 'Bad request - invalid employee ID'),
+            new OA\Response(response: 400,
+                description: 'Bad request - invalid employee ID'),
             new OA\Response(response: 500, description: 'Internal server error')
         ]
     )]
@@ -128,7 +142,8 @@ class PayrollController extends AbstractController
             $handledStamp = $envelope->last(HandledStamp::class);
             $payrolls = $handledStamp->getResult();
 
-            $payrollsData = array_map(fn($payroll) => $payroll->toArray(), $payrolls);
+            $payrollsData = array_map(fn($payroll) => $payroll->toArray(),
+                $payrolls);
 
             return $this->json([
                 'employee_id' => $employeeId,
@@ -136,9 +151,11 @@ class PayrollController extends AbstractController
             ]);
 
         } catch (InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => $e->getMessage()],
+                Response::HTTP_BAD_REQUEST);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'Internal server error'],
+                Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -168,7 +185,8 @@ class PayrollController extends AbstractController
                 )
             ),
             new OA\Response(response: 404, description: 'Payroll not found'),
-            new OA\Response(response: 400, description: 'Bad request - invalid payroll ID'),
+            new OA\Response(response: 400,
+                description: 'Bad request - invalid payroll ID'),
             new OA\Response(response: 500, description: 'Internal server error')
         ]
     )]
@@ -176,9 +194,10 @@ class PayrollController extends AbstractController
     {
         try {
             $payroll = $this->payrollRepository->findById(PayrollId::fromString($payrollId));
-            
+
             if (!$payroll) {
-                return $this->json(['error' => 'Payroll not found'], Response::HTTP_NOT_FOUND);
+                return $this->json(['error' => 'Payroll not found'],
+                    Response::HTTP_NOT_FOUND);
             }
 
             return $this->json([
@@ -186,9 +205,11 @@ class PayrollController extends AbstractController
             ]);
 
         } catch (InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => $e->getMessage()],
+                Response::HTTP_BAD_REQUEST);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'Internal server error'],
+                Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -204,7 +225,8 @@ class PayrollController extends AbstractController
                 description: 'All payrolls retrieved successfully',
                 content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: 'payrolls', type: 'array', items: new OA\Items(type: 'object'))
+                        new OA\Property(property: 'payrolls', type: 'array',
+                            items: new OA\Items(type: 'object'))
                     ]
                 )
             ),
@@ -215,14 +237,16 @@ class PayrollController extends AbstractController
     {
         try {
             $payrolls = $this->payrollRepository->findAll();
-            $payrollsData = array_map(fn($payroll) => $payroll->toArray(), $payrolls);
+            $payrollsData = array_map(fn($payroll) => $payroll->toArray(),
+                $payrolls);
 
             return $this->json([
                 'payrolls' => $payrollsData
             ]);
 
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (Exception $e) {
+            return $this->json(['error' => 'Internal server error'],
+                Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

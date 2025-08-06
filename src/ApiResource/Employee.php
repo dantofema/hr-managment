@@ -8,16 +8,16 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
-use App\Employee\Domain\Entity\Employee as EmployeeEntity;
+use App\Domain\Employee\Entity\Employee as EmployeeEntity;
 
 #[ApiResource(
-    uriTemplate: '/employees',
+    uriTemplate: '/v1/employees',
     operations: [
         new GetCollection(),
-        new Get(uriTemplate: '/employees/{id}'),
+        new Get(uriTemplate: '/v1/employees/{id}'),
         new Patch(
-            uriTemplate: '/employees/{id}/status',
-            controller: 'App\Employee\Infrastructure\Controller\ChangeEmployeeStatusController'
+            uriTemplate: '/v1/employees/{id}/status',
+            controller: 'App\Api\Controller\ChangeEmployeeStatusController'
         )
     ]
 )]

@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Employee\Handler\DeleteEmployee;
 
 use App\Application\Employee\Command\DeleteEmployee\DeleteEmployeeCommand;
 use App\Domain\Employee\Exception\EmployeeNotFoundException;
 use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
 use App\Domain\Employee\ValueObject\EmployeeId;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 class DeleteEmployeeHandler
 {
     private EmployeeRepositoryInterface $employeeRepository;

@@ -1,11 +1,5 @@
-controllers:
+api_controllers:
   resource:
-    path: ../src/Controller/
-    namespace: App\Controller
-  type: attribute
-
-employee_controllers:
-  resource:
-    path: ../src/Employee/Infrastructure/Controller/
-    namespace: App\Employee\Infrastructure\Controller
+    path: ../src/Api/Controller/
+    namespace: App\Api\Controller
   type: attribute

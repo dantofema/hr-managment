@@ -5,11 +5,14 @@ export const useEmployeeStore = defineStore('employee', {
         employees: [],
         loading: false,
         error: null,
-        // Nuevos estados para filtros y búsqueda
+        // Estados para filtros y búsqueda
         searchTerm: '',
         selectedDepartment: '',
         selectedStatus: '',
         selectedRole: '',
+        // Nuevos estados para paginación
+        currentPage: 1,
+        itemsPerPage: 10,
     }),
     actions: {
         async fetchEmployees() {
@@ -85,6 +88,37 @@ export const useEmployeeStore = defineStore('employee', {
             this.selectedDepartment = '';
             this.selectedStatus = '';
             this.selectedRole = '';
+            this.currentPage = 1; // Reset pagination when clearing filters
+        },
+
+        // Nuevas acciones para paginación
+        setCurrentPage(page) {
+            this.currentPage = page;
+        },
+
+        setItemsPerPage(items) {
+            this.itemsPerPage = items;
+            this.currentPage = 1; // Reset to first page when changing items per page
+        },
+
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+            }
+        },
+
+        previousPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+
+        goToFirstPage() {
+            this.currentPage = 1;
+        },
+
+        goToLastPage() {
+            this.currentPage = this.totalPages;
         },
     },
 
@@ -143,7 +177,81 @@ export const useEmployeeStore = defineStore('employee', {
         },
 
         // Estadísticas actualizadas para datos filtrados
-        filteredActiveEmployees: (state, getters) => getters.filteredEmployees.filter(emp => emp.status === 'active'),
-        filteredInactiveEmployees: (state, getters) => getters.filteredEmployees.filter(emp => emp.status === 'inactive'),
+        filteredActiveEmployees: (state, getters) => {
+            if (!getters.filteredEmployees) return [];
+            return getters.filteredEmployees.filter(emp => emp.status === 'active');
+        },
+        filteredInactiveEmployees: (state, getters) => {
+            if (!getters.filteredEmployees) return [];
+            return getters.filteredEmployees.filter(emp => emp.status === 'inactive');
+        },
+
+        // Nuevos getters para paginación
+        totalPages: (state, getters) => {
+            if (!getters.filteredEmployees) return 0;
+            return Math.ceil(getters.filteredEmployees.length / state.itemsPerPage);
+        },
+
+        paginatedEmployees: (state, getters) => {
+            if (!getters.filteredEmployees) return [];
+            const start = (state.currentPage - 1) * state.itemsPerPage;
+            const end = start + state.itemsPerPage;
+            return getters.filteredEmployees.slice(start, end);
+        },
+
+        totalFilteredEmployees: (state, getters) => {
+            if (!getters.filteredEmployees) return 0;
+            return getters.filteredEmployees.length;
+        },
+
+        paginationInfo: (state, getters) => {
+            if (!getters.filteredEmployees || !getters.totalFilteredEmployees) {
+                return {
+                    start: 0,
+                    end: 0,
+                    total: 0,
+                    currentPage: 1,
+                    totalPages: 0,
+                    hasNextPage: false,
+                    hasPreviousPage: false,
+                };
+            }
+            const start = (state.currentPage - 1) * state.itemsPerPage + 1;
+            const end = Math.min(state.currentPage * state.itemsPerPage, getters.totalFilteredEmployees);
+            return {
+                start,
+                end,
+                total: getters.totalFilteredEmployees,
+                currentPage: state.currentPage,
+                totalPages: getters.totalPages,
+                hasNextPage: state.currentPage < getters.totalPages,
+                hasPreviousPage: state.currentPage > 1,
+            };
+        },
+
+        // Páginas visibles para el paginador
+        visiblePages: (state, getters) => {
+            const total = getters.totalPages;
+            const current = state.currentPage;
+            const delta = 2; // Número de páginas a mostrar a cada lado de la actual
+
+            let start = Math.max(1, current - delta);
+            let end = Math.min(total, current + delta);
+
+            // Ajustar si estamos cerca del inicio o final
+            if (current <= delta + 1) {
+                end = Math.min(total, delta * 2 + 1);
+            }
+            if (current >= total - delta) {
+                start = Math.max(1, total - delta * 2);
+            }
+
+            const pages = [];
+            for (let i = start; i <= end; i++) {
+                pages.push(i);
+            }
+
+            return pages;
+        },
     }
 });

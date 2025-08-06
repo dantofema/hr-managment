@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repository;
 
-use App\Employee\Domain\ValueObject\EmployeeId;
+use App\Domain\Employee\ValueObject\EmployeeId;
 use App\Domain\Payroll\Entity\Payroll;
 use App\Domain\Payroll\Repository\PayrollRepositoryInterface;
 use App\Domain\Payroll\ValueObject\PayrollId;
@@ -17,7 +17,7 @@ final class PayrollRepository implements PayrollRepositoryInterface
     private EntityRepository $repository;
 
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager
     ) {
         $this->repository = $entityManager->getRepository(Payroll::class);
     }
@@ -41,8 +41,10 @@ final class PayrollRepository implements PayrollRepositoryInterface
         );
     }
 
-    public function findByEmployeeIdAndPeriod(EmployeeId $employeeId, PayrollPeriod $period): ?Payroll
-    {
+    public function findByEmployeeIdAndPeriod(
+        EmployeeId $employeeId,
+        PayrollPeriod $period
+    ): ?Payroll {
         return $this->repository->findOneBy([
             'employeeId' => (string) $employeeId,
             'periodStart' => $period->getStartDate(),
@@ -61,14 +63,16 @@ final class PayrollRepository implements PayrollRepositoryInterface
         $this->entityManager->flush();
     }
 
-    public function existsForEmployeeAndPeriod(EmployeeId $employeeId, PayrollPeriod $period): bool
-    {
+    public function existsForEmployeeAndPeriod(
+        EmployeeId $employeeId,
+        PayrollPeriod $period
+    ): bool {
         $count = $this->repository->count([
             'employeeId' => (string) $employeeId,
             'periodStart' => $period->getStartDate(),
             'periodEnd' => $period->getEndDate(),
         ]);
-        
+
         return $count > 0;
     }
 }

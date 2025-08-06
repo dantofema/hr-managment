@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Employee\Handler;
 
-use App\Employee\Application\Query\GetEmployeeByIdQuery;
+use App\Application\Employee\Query\GetEmployeeByIdQuery;
 use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
 use App\Domain\Employee\ValueObject\EmployeeId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

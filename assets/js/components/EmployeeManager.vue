@@ -9,7 +9,7 @@
       </div>
       <div class="flex items-center gap-4">
         <span class="text-sm text-gray-500">
-          Total: {{ employees.length }} empleados
+          Total: {{ filteredEmployees.length }} de {{ employees.length }} empleados
         </span>
         <button
             :disabled="loading"
@@ -61,6 +61,148 @@
       </button>
     </div>
 
+    <!-- Filtros y Búsqueda -->
+    <div class="bg-white rounded-lg shadow mb-6 p-6">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <!-- Barra de Búsqueda -->
+        <div class="flex-1">
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"/>
+            </svg>
+            <input
+                v-model="searchTerm"
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Buscar por nombre o email..."
+                type="text"
+            />
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <!-- Filtro por Departamento -->
+          <select
+              v-model="selectedDepartment"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Todos los departamentos</option>
+            <option v-for="dept in uniqueDepartments"
+                    :key="dept"
+                    :value="dept">
+              {{ dept }}
+            </option>
+          </select>
+
+          <!-- Filtro por Estado -->
+          <select
+              v-model="selectedStatus"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Todos los estados</option>
+            <option value="active">Activo</option>
+            <option value="inactive">Inactivo</option>
+          </select>
+
+          <!-- Filtro por Rol -->
+          <select
+              v-model="selectedRole"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Todos los roles</option>
+            <option v-for="role in uniqueRoles"
+                    :key="role"
+                    :value="role">
+              {{ role }}
+            </option>
+          </select>
+
+          <!-- Botón Limpiar Filtros -->
+          <button
+              :disabled="!hasActiveFilters"
+              class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 disabled:text-gray-400 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:hover:bg-white transition-colors"
+              @click="clearAllFilters"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      </div>
+
+      <!-- Indicadores de Filtros Activos -->
+      <div v-if="hasActiveFilters"
+           class="mt-4 flex flex-wrap gap-2">
+        <span v-if="searchTerm"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          Búsqueda: "{{ searchTerm }}"
+          <button class="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-blue-400 hover:bg-blue-200 hover:text-blue-500"
+                  @click="searchTerm = ''">
+            <svg class="h-2 w-2"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 8 8">
+              <path d="m1 1 6 6m0-6-6 6"
+                    stroke-linecap="round"
+                    stroke-width="1.5"/>
+            </svg>
+          </button>
+        </span>
+
+        <span v-if="selectedDepartment"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          Departamento: {{ selectedDepartment }}
+          <button class="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-green-400 hover:bg-green-200 hover:text-green-500"
+                  @click="selectedDepartment = ''">
+            <svg class="h-2 w-2"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 8 8">
+              <path d="m1 1 6 6m0-6-6 6"
+                    stroke-linecap="round"
+                    stroke-width="1.5"/>
+            </svg>
+          </button>
+        </span>
+
+        <span v-if="selectedStatus"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          Estado: {{ selectedStatus === 'active' ? 'Activo' : 'Inactivo' }}
+          <button class="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-yellow-400 hover:bg-yellow-200 hover:text-yellow-500"
+                  @click="selectedStatus = ''">
+            <svg class="h-2 w-2"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 8 8">
+              <path d="m1 1 6 6m0-6-6 6"
+                    stroke-linecap="round"
+                    stroke-width="1.5"/>
+            </svg>
+          </button>
+        </span>
+
+        <span v-if="selectedRole"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+          Rol: {{ selectedRole }}
+          <button class="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-purple-400 hover:bg-purple-200 hover:text-purple-500"
+                  @click="selectedRole = ''">
+            <svg class="h-2 w-2"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 8 8">
+              <path d="m1 1 6 6m0-6-6 6"
+                    stroke-linecap="round"
+                    stroke-width="1.5"/>
+            </svg>
+          </button>
+        </span>
+      </div>
+    </div>
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
       <div class="bg-white rounded-lg shadow p-6">
@@ -79,7 +221,7 @@
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Empleados Activos</p>
             <p class="text-2xl font-semibold text-gray-900">
-              {{ activeEmployees.length }}</p>
+              {{ filteredActiveEmployees.length }}</p>
           </div>
         </div>
       </div>
@@ -100,7 +242,7 @@
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Departamentos</p>
             <p class="text-2xl font-semibold text-gray-900">
-              {{ Object.keys(employeesByDepartment).length }}</p>
+              {{ uniqueDepartments.length }}</p>
           </div>
         </div>
       </div>
@@ -121,7 +263,7 @@
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Empleados Inactivos</p>
             <p class="text-2xl font-semibold text-gray-900">
-              {{ inactiveEmployees.length }}</p>
+              {{ filteredInactiveEmployees.length }}</p>
           </div>
         </div>
       </div>
@@ -129,8 +271,23 @@
 
     <!-- Employee Table -->
     <div class="bg-white shadow rounded-lg overflow-hidden">
-      <div class="px-6 py-4 border-b border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h3 class="text-lg font-medium text-gray-900">Lista de Empleados</h3>
+        <!-- Items per page selector -->
+        <div class="flex items-center gap-2">
+          <label class="text-sm text-gray-600">Mostrar:</label>
+          <select
+              v-model="itemsPerPage"
+              class="text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              @change="setItemsPerPage(parseInt($event.target.value))"
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+          <span class="text-sm text-gray-600">por página</span>
+        </div>
       </div>
 
       <!-- Loading State -->
@@ -156,6 +313,27 @@
       </div>
 
       <!-- Empty State -->
+      <div v-else-if="filteredEmployees.length === 0 && employees.length > 0"
+           class="p-8 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400"
+             fill="none"
+             stroke="currentColor"
+             viewBox="0 0 24 24">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"/>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No se encontraron
+          empleados</h3>
+        <p class="mt-1 text-sm text-gray-500">Intenta ajustar los filtros de
+          búsqueda.</p>
+        <button class="mt-4 text-blue-600 hover:text-blue-500 text-sm font-medium"
+                @click="clearAllFilters">
+          Limpiar todos los filtros
+        </button>
+      </div>
+
       <div v-else-if="employees.length === 0"
            class="p-8 text-center">
         <svg class="mx-auto h-12 w-12 text-gray-400"
@@ -196,7 +374,7 @@
           </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="employee in employees"
+          <tr v-for="employee in paginatedEmployees"
               :key="employee.id"
               class="hover:bg-gray-50">
             <!-- Employee Info -->
@@ -204,9 +382,9 @@
               <div class="flex items-center">
                 <div class="flex-shrink-0 h-10 w-10">
                   <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                      <span class="text-sm font-medium text-gray-700">
-                        {{ getInitials(employee.name) }}
-                      </span>
+                        <span class="text-sm font-medium text-gray-700">
+                          {{ getInitials(employee.name) }}
+                        </span>
                   </div>
                 </div>
                 <div class="ml-4">
@@ -220,9 +398,9 @@
 
             <!-- Department -->
             <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  {{ employee.department }}
-                </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {{ employee.department }}
+                  </span>
             </td>
 
             <!-- Role -->
@@ -232,44 +410,232 @@
 
             <!-- Status -->
             <td class="px-6 py-4 whitespace-nowrap">
-                <span :class="getStatusClass(employee.status)"
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                  {{ getStatusText(employee.status) }}
-                </span>
+                  <span :class="getStatusClass(employee.status)"
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                    {{ getStatusText(employee.status) }}
+                  </span>
             </td>
 
             <!-- Actions -->
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <select
-                  :value="employee.status"
-                  class="text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  @change="handleStatusChange(employee.id, $event.target.value)"
-              >
-                <option value="active">Activo</option>
-                <option value="inactive">Inactivo</option>
-              </select>
+              <div class="flex items-center gap-2">
+                <button
+                    class="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                    @click="openEmployeeModal(employee)"
+                >
+                  Ver detalles
+                </button>
+                <select
+                    :value="employee.status"
+                    class="text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    @change="handleStatusChange(employee.id, $event.target.value)"
+                >
+                  <option value="active">Activo</option>
+                  <option value="inactive">Inactivo</option>
+                </select>
+              </div>
             </td>
           </tr>
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination Controls -->
+      <div v-if="totalPages > 1"
+           class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
+        <!-- Pagination Info -->
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button
+              :disabled="!paginationInfo.hasPreviousPage"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+              @click="previousPage"
+          >
+            Anterior
+          </button>
+          <button
+              :disabled="!paginationInfo.hasNextPage"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+              @click="nextPage"
+          >
+            Siguiente
+          </button>
+        </div>
+
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-gray-700">
+              Mostrando
+              <span class="font-medium">{{ paginationInfo.start }}</span>
+              a
+              <span class="font-medium">{{ paginationInfo.end }}</span>
+              de
+              <span class="font-medium">{{ paginationInfo.total }}</span>
+              empleados
+            </p>
+          </div>
+
+          <div>
+            <nav aria-label="Pagination"
+                 class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <!-- Previous Button -->
+              <button
+                  :disabled="!paginationInfo.hasPreviousPage"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300"
+                  @click="previousPage"
+              >
+                <svg class="h-5 w-5"
+                     fill="currentColor"
+                     viewBox="0 0 20 20">
+                  <path clip-rule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        fill-rule="evenodd"/>
+                </svg>
+              </button>
+
+              <!-- First page button (if not visible in range) -->
+              <template v-if="visiblePages[0] > 1">
+                <button
+                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    @click="goToFirstPage"
+                >
+                  1
+                </button>
+                <span v-if="visiblePages[0] > 2"
+                      class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                  ...
+                </span>
+              </template>
+
+              <!-- Page Numbers -->
+              <button
+                  v-for="page in visiblePages"
+                  :key="page"
+                  :class="[
+                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                  page === currentPage
+                    ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                ]"
+                  @click="setCurrentPage(page)"
+              >
+                {{ page }}
+              </button>
+
+              <!-- Last page button (if not visible in range) -->
+              <template v-if="visiblePages[visiblePages.length - 1] < totalPages">
+                <span v-if="visiblePages[visiblePages.length - 1] < totalPages - 1"
+                      class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                  ...
+                </span>
+                <button
+                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    @click="goToLastPage"
+                >
+                  {{ totalPages }}
+                </button>
+              </template>
+
+              <!-- Next Button -->
+              <button
+                  :disabled="!paginationInfo.hasNextPage"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-300"
+                  @click="nextPage"
+              >
+                <svg class="h-5 w-5"
+                     fill="currentColor"
+                     viewBox="0 0 20 20">
+                  <path clip-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        fill-rule="evenodd"/>
+                </svg>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Employee Modal -->
+    <EmployeeModal
+        :employee="selectedEmployee"
+        :is-open="isModalOpen"
+        @close="closeEmployeeModal"
+        @update-status="handleModalStatusUpdate"
+    />
   </div>
 </template>
 
 <script setup>
-import {computed, onMounted} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import {useEmployeeStore} from '../stores/employee.js';
+import EmployeeModal from './EmployeeModal.vue';
 
 const employeeStore = useEmployeeStore();
 
+// Modal state
+const isModalOpen = ref(false);
+const selectedEmployee = ref(null);
+
 // Computed properties
 const employees = computed(() => employeeStore.employees);
+const filteredEmployees = computed(() => employeeStore.filteredEmployees);
 const loading = computed(() => employeeStore.loading);
 const error = computed(() => employeeStore.error);
-const activeEmployees = computed(() => employeeStore.activeEmployees);
-const inactiveEmployees = computed(() => employeeStore.inactiveEmployees);
-const employeesByDepartment = computed(() => employeeStore.employeesByDepartment);
+const filteredActiveEmployees = computed(() => employeeStore.filteredActiveEmployees);
+const filteredInactiveEmployees = computed(() => employeeStore.filteredInactiveEmployees);
+const uniqueDepartments = computed(() => employeeStore.uniqueDepartments);
+const uniqueRoles = computed(() => employeeStore.uniqueRoles);
+
+// Filter states
+const searchTerm = computed({
+  get: () => employeeStore.searchTerm,
+  set: (value) => employeeStore.setSearchTerm(value)
+});
+
+const selectedDepartment = computed({
+  get: () => employeeStore.selectedDepartment,
+  set: (value) => employeeStore.setDepartmentFilter(value)
+});
+
+const selectedStatus = computed({
+  get: () => employeeStore.selectedStatus,
+  set: (value) => employeeStore.setStatusFilter(value)
+});
+
+const selectedRole = computed({
+  get: () => employeeStore.selectedRole,
+  set: (value) => employeeStore.setRoleFilter(value)
+});
+
+const hasActiveFilters = computed(() => {
+  return !!(employeeStore.searchTerm || employeeStore.selectedDepartment ||
+      employeeStore.selectedStatus || employeeStore.selectedRole);
+});
+
+// Pagination states
+const currentPage = computed(() => employeeStore.currentPage);
+const itemsPerPage = computed(() => employeeStore.itemsPerPage);
+const totalPages = computed(() => Math.ceil(filteredEmployees.value.length / itemsPerPage.value));
+const paginationInfo = computed(() => ({
+  total: filteredEmployees.value.length,
+  perPage: itemsPerPage.value,
+  currentPage: currentPage.value,
+  start: (currentPage.value - 1) * itemsPerPage.value + 1,
+  end: Math.min(currentPage.value * itemsPerPage.value, filteredEmployees.value.length),
+  hasPreviousPage: currentPage.value > 1,
+  hasNextPage: currentPage.value < totalPages.value
+}));
+const visiblePages = computed(() => {
+  const pages = [];
+  for (let i = 1; i <= totalPages.value; i++) {
+    if (i === 1 || i === totalPages.value || (i >= currentPage.value - 1 && i <= currentPage.value + 1)) {
+      pages.push(i);
+    } else if (i === currentPage.value - 2 || i === currentPage.value + 2) {
+      pages.push('...');
+    }
+  }
+  return pages;
+});
 
 // Methods
 const refreshEmployees = () => {
@@ -278,6 +644,38 @@ const refreshEmployees = () => {
 
 const clearError = () => {
   employeeStore.clearError();
+};
+
+const clearAllFilters = () => {
+  employeeStore.clearFilters();
+};
+
+const setItemsPerPage = (value) => {
+  employeeStore.setItemsPerPage(value);
+};
+
+const setCurrentPage = (value) => {
+  employeeStore.setCurrentPage(value);
+};
+
+const previousPage = () => {
+  if (paginationInfo.value.hasPreviousPage) {
+    employeeStore.setCurrentPage(currentPage.value - 1);
+  }
+};
+
+const nextPage = () => {
+  if (paginationInfo.value.hasNextPage) {
+    employeeStore.setCurrentPage(currentPage.value + 1);
+  }
+};
+
+const goToFirstPage = () => {
+  employeeStore.setCurrentPage(1);
+};
+
+const goToLastPage = () => {
+  employeeStore.setCurrentPage(totalPages.value);
 };
 
 const getInitials = (name) => {
@@ -299,6 +697,25 @@ const handleStatusChange = async (employeeId, newStatus) => {
   if (success) {
     // Opcional: mostrar mensaje de éxito
     console.log('Estado del empleado actualizado correctamente');
+  }
+};
+
+// Modal methods
+const openEmployeeModal = (employee) => {
+  selectedEmployee.value = employee;
+  isModalOpen.value = true;
+};
+
+const closeEmployeeModal = () => {
+  isModalOpen.value = false;
+  selectedEmployee.value = null;
+};
+
+const handleModalStatusUpdate = async (employeeId, newStatus) => {
+  const success = await employeeStore.updateEmployeeStatus(employeeId, newStatus);
+  if (success) {
+    console.log('Estado del empleado actualizado correctamente');
+    // El modal se mantiene abierto para ver los cambios reflejados
   }
 };
 

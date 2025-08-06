@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Employee\Handler;
 
-use App\Employee\Application\Command\ChangeEmployeeStatus\ChangeEmployeeStatusCommand;
+use App\Application\Employee\Command\ChangeEmployeeStatus\ChangeEmployeeStatusCommand;
 use App\Domain\Employee\Event\EmployeeStatusChanged;
 use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
 use App\Domain\Employee\ValueObject\EmployeeId;
