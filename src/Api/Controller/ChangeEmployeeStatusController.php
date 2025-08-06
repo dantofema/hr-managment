@@ -27,6 +27,12 @@ class ChangeEmployeeStatusController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return new JsonResponse([
+                'error' => 'Invalid JSON format: ' . json_last_error_msg()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         if (!isset($data['status'])) {
             return new JsonResponse(['error' => 'Status is required'],
                 Response::HTTP_BAD_REQUEST);
