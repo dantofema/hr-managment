@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\ApiResource;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -23,6 +24,10 @@ use ApiPlatform\Metadata\Post;
         new Get(
             uriTemplate: '/v1/salaries/employee/{employeeId}',
             controller: 'App\Api\Controller\SalaryController::getSalaryByEmployee'
+        ),
+        new Delete(
+            uriTemplate: '/v1/salaries/employee/{employeeId}',
+            controller: 'App\Api\Controller\SalaryController::deleteSalary'
         )
     ]
 )]

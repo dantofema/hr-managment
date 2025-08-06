@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Api\Controller;
 
 use App\Application\Payroll\Command\CreateSalaryCommand;
+use App\Application\Payroll\Command\DeleteSalaryCommand;
 use App\Application\Payroll\Query\GetSalaryByEmployeeIdQuery;
 use App\Domain\Payroll\Repository\SalaryRepositoryInterface;
 use InvalidArgumentException;
@@ -91,6 +92,23 @@ class SalaryController extends AbstractController
                 'salaries' => $salariesData
             ]);
 
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function deleteSalary(string $employeeId): JsonResponse
+    {
+        try {
+            $command = new DeleteSalaryCommand($employeeId);
+            $this->messageBus->dispatch($command);
+
+            return $this->json([
+                'message' => 'Salary deleted successfully'
+            ], Response::HTTP_OK);
+
+        } catch (InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return $this->json(['error' => 'Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

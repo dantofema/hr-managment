@@ -16,8 +16,7 @@
             class="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
             @click="refreshEmployees"
         >
-          <svg :class="{ 'animate-spin': loading }"
-               class="w-4 h-4"
+          <svg :class="['w-5 h-5', { 'animate-spin': loading }]"
                fill="none"
                stroke="currentColor"
                viewBox="0 0 24 24">
