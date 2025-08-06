@@ -68,6 +68,12 @@
       <h3>Edit Employee</h3>
       <form @submit.prevent="saveEmployee">
         <label>
+          ID:
+          <input v-model="form.id"
+                 readonly
+                 type="text"/>
+        </label>
+        <label>
           Name:
           <input v-model="form.name"
                  required
@@ -78,6 +84,24 @@
           <input v-model="form.email"
                  required
                  type="email"/>
+        </label>
+        <label>
+          Department:
+          <input v-model="form.department"
+                 required
+                 type="text"/>
+        </label>
+        <label>
+          Role:
+          <input v-model="form.role"
+                 required
+                 type="text"/>
+        </label>
+        <label>
+          Status:
+          <input v-model="form.status"
+                 required
+                 type="text"/>
         </label>
         <button type="submit">Save</button>
         <button type="button"
@@ -95,16 +119,37 @@ const employees = ref([]);
 const loading = ref(false);
 const error = ref('');
 const editingEmployee = ref(null);
-const form = ref({name: '', email: ''});
+const form = ref({
+  id: '',
+  name: '',
+  email: '',
+  department: '',
+  role: '',
+  status: ''
+});
 
 function editEmployee(employee) {
   editingEmployee.value = employee;
-  form.value = {name: employee.name, email: employee.email};
+  form.value = {
+    id: employee.id,
+    name: employee.name,
+    email: employee.email,
+    department: employee.department,
+    role: employee.role,
+    status: employee.status
+  };
 }
 
 function cancelEdit() {
   editingEmployee.value = null;
-  form.value = {name: '', email: ''};
+  form.value = {
+    id: '',
+    name: '',
+    email: '',
+    department: '',
+    role: '',
+    status: ''
+  };
 }
 
 async function saveEmployee() {
@@ -112,14 +157,13 @@ async function saveEmployee() {
   loading.value = true;
   try {
     const res = await fetch(`/api/v1/employees/${editingEmployee.value.id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(form.value)
     });
     if (!res.ok) throw new Error('Failed to update employee');
     // Update local list
-    editingEmployee.value.name = form.value.name;
-    editingEmployee.value.email = form.value.email;
+    Object.assign(editingEmployee.value, form.value);
     cancelEdit();
   } catch (e) {
     error.value = e.message;
