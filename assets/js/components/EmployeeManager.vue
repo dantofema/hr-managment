@@ -293,7 +293,7 @@
       <div v-if="loading && employees.length === 0"
            class="p-8 text-center">
         <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-gray-500 bg-white">
-          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500"
+          <svg class="animate-spin -ml-1 mr-3 w-5 h-5 text-gray-500"
                fill="none"
                viewBox="0 0 24 24"
                xmlns="http://www.w3.org/2000/svg">
@@ -314,7 +314,7 @@
       <!-- Empty State -->
       <div v-else-if="filteredEmployees.length === 0 && employees.length > 0"
            class="p-8 text-center">
-        <svg class="mx-auto h-12 w-12 text-gray-400"
+        <svg class="mx-auto w-12 h-12 text-gray-400"
              fill="none"
              stroke="currentColor"
              viewBox="0 0 24 24">
@@ -335,7 +335,7 @@
 
       <div v-else-if="employees.length === 0"
            class="p-8 text-center">
-        <svg class="mx-auto h-12 w-12 text-gray-400"
+        <svg class="mx-auto w-12 h-12 text-gray-400"
              fill="none"
              stroke="currentColor"
              viewBox="0 0 24 24">
