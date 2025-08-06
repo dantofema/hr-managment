@@ -1,3 +1,7 @@
+> ⚠️ **Advertencia:** Este proyecto fue desarrollado como parte de una prueba
+> técnica en un tiempo limitado de **5 horas y media**. Algunas funcionalidades
+> pueden no estar completamente implementadas.
+
 # HR Management
 
 ## Datos personales
@@ -107,6 +111,3 @@ Se implementaron Data Transfer Objects para separar la lógica de negocio de la
 presentación y facilitar la validación y transformación de datos.
 
 ---
-
-
-
