@@ -18,16 +18,16 @@ class DeleteEmployeeController extends AbstractController
     ) {
     }
 
-    public function __invoke(string $uuid): JsonResponse
+    public function __invoke(string $id): JsonResponse
     {
-        $command = new DeleteEmployeeCommand($uuid);
+        $command = new DeleteEmployeeCommand($id);
 
         try {
             $this->messageBus->dispatch($command);
 
             return new JsonResponse([
                 'message' => 'Employee deleted successfully',
-                'employee_id' => $uuid
+                'employee_id' => $id
             ]);
         } catch (Exception $e) {
             return new JsonResponse([
