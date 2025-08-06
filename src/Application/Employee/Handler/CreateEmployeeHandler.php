@@ -24,7 +24,7 @@ final readonly class CreateEmployeeHandler
     ) {
     }
 
-    public function __invoke(CreateEmployeeCommand $command): void
+    public function __invoke(CreateEmployeeCommand $command): string
     {
         $employeeId = EmployeeId::generate();
         $employee = new Employee(
@@ -39,5 +39,7 @@ final readonly class CreateEmployeeHandler
 
         $this->eventDispatcher->dispatch(new EmployeeCreated($employeeId,
             new DateTimeImmutable()));
+            
+        return (string) $employeeId;
     }
 }

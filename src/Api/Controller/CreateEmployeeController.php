@@ -131,12 +131,13 @@ class CreateEmployeeController extends AbstractController
         );
 
         try {
-            $result = $this->messageBus->dispatch($command);
+            $envelope = $this->messageBus->dispatch($command);
 
-            // Extract employee ID from the result if available
+            // Extract employee ID from the envelope
             $employeeId = null;
-            if (method_exists($result, 'getReturnValue')) {
-                $employeeId = $result->getReturnValue();
+            $handledStamp = $envelope->last(\Symfony\Component\Messenger\Stamp\HandledStamp::class);
+            if ($handledStamp) {
+                $employeeId = $handledStamp->getResult();
             }
 
             return new JsonResponse([

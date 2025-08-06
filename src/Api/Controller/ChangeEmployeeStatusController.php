@@ -57,6 +57,13 @@ class ChangeEmployeeStatusController extends AbstractController
                 'new_status' => $newStatus->value
             ]);
         } catch (Exception $e) {
+            // Check if it's an "Employee not found" error
+            if (str_contains($e->getMessage(), 'Employee not found')) {
+                return new JsonResponse([
+                    'error' => $e->getMessage()
+                ], Response::HTTP_NOT_FOUND);
+            }
+            
             return new JsonResponse([
                 'error' => $e->getMessage()
             ], Response::HTTP_BAD_REQUEST);
