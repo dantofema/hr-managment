@@ -6,6 +6,8 @@ namespace App\Api\Controller;
 
 use App\Api\Dto\UpdateSalaryDto;
 use App\Application\Payroll\Command\UpdateSalaryCommand;
+use App\Domain\Employee\Repository\EmployeeRepositoryInterface;
+use App\Domain\Employee\ValueObject\EmployeeId;
 use Exception;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +34,8 @@ class UpdateEmployeeSalaryController extends AbstractController
     public function __construct(
         private MessageBusInterface $messageBus,
         private SerializerInterface $serializer,
-        private ValidatorInterface $validator
+        private ValidatorInterface $validator,
+        private EmployeeRepositoryInterface $employeeRepository
     ) {
     }
 
@@ -109,6 +112,15 @@ class UpdateEmployeeSalaryController extends AbstractController
     public function __invoke(string $id, Request $request): JsonResponse
     {
         try {
+            // Check if employee exists first
+            $employeeId = EmployeeId::fromString($id);
+            $employee = $this->employeeRepository->findById($employeeId);
+            if (!$employee) {
+                return new JsonResponse([
+                    'error' => 'Employee not found'
+                ], Response::HTTP_NOT_FOUND);
+            }
+
             // Deserialize request data to DTO
             $updateSalaryDto = $this->serializer->deserialize(
                 $request->getContent(),
