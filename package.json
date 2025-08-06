@@ -7,7 +7,7 @@
     "build": "vite build --config assets/vite.config.mjs"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@vitejs/plugin-vue": "^4.6.2",
     "@vue/compiler-sfc": "^3.0.0",
     "autoprefixer": "^10.0.0",
     "pinia": "^2.0.0",
