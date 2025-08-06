@@ -178,29 +178,43 @@ export const useEmployeeStore = defineStore('employee', {
 
         // Estadísticas actualizadas para datos filtrados
         filteredActiveEmployees: (state, getters) => {
-            if (!getters.filteredEmployees) return [];
-            return getters.filteredEmployees.filter(emp => emp.status === 'active');
+            // Extra safety checks to prevent initialization errors
+            if (!getters || !getters.filteredEmployees || !Array.isArray(getters.filteredEmployees)) {
+                return [];
+            }
+            return getters.filteredEmployees.filter(emp => emp && emp.status === 'active');
         },
         filteredInactiveEmployees: (state, getters) => {
-            if (!getters.filteredEmployees) return [];
-            return getters.filteredEmployees.filter(emp => emp.status === 'inactive');
+            // Extra safety checks to prevent initialization errors
+            if (!getters || !getters.filteredEmployees || !Array.isArray(getters.filteredEmployees)) {
+                return [];
+            }
+            return getters.filteredEmployees.filter(emp => emp && emp.status === 'inactive');
         },
 
         // Nuevos getters para paginación
         totalPages: (state, getters) => {
-            if (!getters.filteredEmployees) return 0;
-            return Math.ceil(getters.filteredEmployees.length / state.itemsPerPage);
+            if (!getters || !getters.filteredEmployees || !Array.isArray(getters.filteredEmployees)) {
+                return 0;
+            }
+            return Math.ceil(getters.filteredEmployees.length / (state.itemsPerPage || 10));
         },
 
         paginatedEmployees: (state, getters) => {
-            if (!getters.filteredEmployees) return [];
-            const start = (state.currentPage - 1) * state.itemsPerPage;
-            const end = start + state.itemsPerPage;
+            if (!getters || !getters.filteredEmployees || !Array.isArray(getters.filteredEmployees)) {
+                return [];
+            }
+            const itemsPerPage = state.itemsPerPage || 10;
+            const currentPage = state.currentPage || 1;
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
             return getters.filteredEmployees.slice(start, end);
         },
 
         totalFilteredEmployees: (state, getters) => {
-            if (!getters.filteredEmployees) return 0;
+            if (!getters || !getters.filteredEmployees || !Array.isArray(getters.filteredEmployees)) {
+                return 0;
+            }
             return getters.filteredEmployees.length;
         },
 

@@ -1,9 +1,0 @@
-nelmio_api_doc:
-    documentation:
-        info:
-            title: HR Management - Payroll System API
-            description: Simple payroll system with automatic salary calculations, tax deductions, and receipt generation. Built with DDD principles.
-            version: 1.0.0
-    areas: # to filter documented areas
-        path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
