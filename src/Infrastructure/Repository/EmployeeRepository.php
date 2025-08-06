@@ -67,6 +67,30 @@ final class EmployeeRepository implements EmployeeRepositoryInterface
         return $queryBuilder->getQuery()->getResult();
     }
 
+    public function countAll(array $filters = []): int
+    {
+        $queryBuilder = $this->repository->createQueryBuilder('e')
+            ->select('COUNT(e.id)');
+
+        // Apply the same filters as in findAllPaginated
+        if (!empty($filters['department'])) {
+            $queryBuilder->andWhere('e.department = :department')
+                ->setParameter('department', $filters['department']);
+        }
+
+        if (!empty($filters['status'])) {
+            $queryBuilder->andWhere('e.status = :status')
+                ->setParameter('status', $filters['status']);
+        }
+
+        if (!empty($filters['role'])) {
+            $queryBuilder->andWhere('e.role = :role')
+                ->setParameter('role', $filters['role']);
+        }
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
     public function delete(Employee $employee): void
     {
         $this->entityManager->remove($employee);

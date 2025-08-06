@@ -21,7 +21,19 @@ final readonly class GetEmployeesHandler
         $employees = $this->employeeRepository->findAllPaginated($query->page,
             $query->limit, $query->filters);
 
-        return array_map(fn($employee) => $employee->getFullInfo(), $employees);
+        // Get total count for pagination
+        $total = $this->employeeRepository->countAll($query->filters);
+        $pages = (int) ceil($total / $query->limit);
+
+        return [
+            'data' => array_map(fn($employee) => $employee->getFullInfo(), $employees),
+            'pagination' => [
+                'page' => $query->page,
+                'limit' => $query->limit,
+                'total' => $total,
+                'pages' => $pages
+            ]
+        ];
     }
 }
 

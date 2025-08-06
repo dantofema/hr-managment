@@ -25,5 +25,7 @@ interface EmployeeRepositoryInterface
         array $filters
     ): array;
 
+    public function countAll(array $filters = []): int;
+
     public function delete(Employee $employee): void;
 }

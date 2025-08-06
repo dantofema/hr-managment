@@ -73,6 +73,13 @@ class GetEmployeeController extends AbstractController
             // Return the employee data as JSON
             return new JsonResponse($result);
         } catch (Exception $e) {
+            // Check if it's an "Employee not found" error
+            if (str_contains($e->getMessage(), 'Employee not found')) {
+                return new JsonResponse([
+                    'error' => 'Employee not found'
+                ], Response::HTTP_NOT_FOUND);
+            }
+            
             return new JsonResponse([
                 'error' => $e->getMessage()
             ], Response::HTTP_BAD_REQUEST);
