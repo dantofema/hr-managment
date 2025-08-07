@@ -8,31 +8,52 @@ use InvalidArgumentException;
 
 final readonly class NetSalary
 {
+    private const VALID_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY'];
+
     public function __construct(
         private float $amount,
-        private string $currency = 'USD'
+        private string $currency
     ) {
-        if ($amount < 0) {
-            throw new InvalidArgumentException('Net salary amount cannot be negative');
+        if ($amount <= 0) {
+            throw new InvalidArgumentException('Net salary amount must be positive');
         }
         
-        if (empty(trim($currency))) {
-            throw new InvalidArgumentException('Currency cannot be empty');
-        }
-        
-        if (strlen($currency) !== 3) {
-            throw new InvalidArgumentException('Currency must be a 3-letter code (e.g., USD, EUR)');
+        if (!in_array($currency, self::VALID_CURRENCIES, true)) {
+            throw new InvalidArgumentException("Invalid currency code: {$currency}");
         }
     }
 
-    public function amount(): float
+    public function getAmount(): float
     {
         return $this->amount;
     }
 
-    public function currency(): string
+    public function getCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function format(): string
+    {
+        return sprintf('%.2f %s', $this->amount, $this->currency);
+    }
+
+    public function isGreaterThan(self $other): bool
+    {
+        if ($this->currency !== $other->currency) {
+            throw new InvalidArgumentException("Cannot compare different currencies: {$this->currency} and {$other->currency}");
+        }
+
+        return $this->amount > $other->amount;
+    }
+
+    public function isLessThan(self $other): bool
+    {
+        if ($this->currency !== $other->currency) {
+            throw new InvalidArgumentException("Cannot compare different currencies: {$this->currency} and {$other->currency}");
+        }
+
+        return $this->amount < $other->amount;
     }
 
     public function equals(self $other): bool
@@ -43,6 +64,6 @@ final readonly class NetSalary
 
     public function __toString(): string
     {
-        return number_format($this->amount, 2) . ' ' . $this->currency;
+        return $this->format();
     }
 }

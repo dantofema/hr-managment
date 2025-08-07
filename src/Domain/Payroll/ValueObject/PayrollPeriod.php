@@ -14,15 +14,11 @@ final readonly class PayrollPeriod
         private DateTimeImmutable $endDate
     ) {
         if ($startDate >= $endDate) {
-            throw new InvalidArgumentException('Start date must be before end date');
-        }
-        
-        if ($this->getDurationInDays() > 31) {
-            throw new InvalidArgumentException('Payroll period cannot exceed 31 days');
+            throw new InvalidArgumentException('End date must be after start date');
         }
     }
 
-    public static function monthly(int $year, int $month): self
+    public static function forMonth(int $year, int $month): self
     {
         $startDate = new DateTimeImmutable(sprintf('%d-%02d-01', $year, $month));
         $endDate = $startDate->modify('last day of this month');
@@ -30,26 +26,35 @@ final readonly class PayrollPeriod
         return new self($startDate, $endDate);
     }
 
-    public static function weekly(DateTimeImmutable $startDate): self
+    public static function biweekly(DateTimeImmutable $startDate): self
     {
-        $endDate = $startDate->modify('+6 days');
+        $endDate = $startDate->modify('+13 days');
         
         return new self($startDate, $endDate);
     }
 
-    public function startDate(): DateTimeImmutable
+    public function getStartDate(): DateTimeImmutable
     {
         return $this->startDate;
     }
 
-    public function endDate(): DateTimeImmutable
+    public function getEndDate(): DateTimeImmutable
     {
         return $this->endDate;
     }
 
-    public function getDurationInDays(): int
+    public function getDaysInPeriod(): int
     {
-        return $this->startDate->diff($this->endDate)->days + 1;
+        return $this->startDate->diff($this->endDate)->days;
+    }
+
+    public function format(): string
+    {
+        return sprintf(
+            '%s to %s',
+            $this->startDate->format('Y-m-d'),
+            $this->endDate->format('Y-m-d')
+        );
     }
 
     public function contains(DateTimeImmutable $date): bool

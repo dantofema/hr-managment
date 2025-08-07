@@ -113,4 +113,62 @@ class Employee
         $this->email = $email;
         $this->updatedAt = new DateTimeImmutable();
     }
+
+    public function getYearsOfService(): int
+    {
+        $now = new DateTimeImmutable();
+        return $now->diff($this->hiredAt)->y;
+    }
+
+    public function getMonthsOfService(): int
+    {
+        $now = new DateTimeImmutable();
+        $diff = $now->diff($this->hiredAt);
+        return ($diff->y * 12) + $diff->m;
+    }
+
+    public function calculateAnnualVacationDays(): int
+    {
+        $yearsOfService = $this->getYearsOfService();
+        
+        // Base vacation days: 15 days
+        $baseDays = 15;
+        
+        // Additional days based on years of service
+        if ($yearsOfService >= 10) {
+            return $baseDays + 10; // 25 days for 10+ years
+        } elseif ($yearsOfService >= 5) {
+            return $baseDays + 5; // 20 days for 5-9 years
+        }
+        
+        return $baseDays; // 15 days for 0-4 years
+    }
+
+    public function isEligibleForVacation(): bool
+    {
+        // Employee must have worked for at least 3 months to be eligible for vacation
+        return $this->getMonthsOfService() >= 3;
+    }
+
+    public function getVacationEligibilityDate(): DateTimeImmutable
+    {
+        return $this->hiredAt->modify('+3 months');
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id->toString(),
+            'full_name' => $this->fullName->toString(),
+            'email' => $this->email->toString(),
+            'position' => $this->position->toString(),
+            'salary' => $this->salary->toString(),
+            'hired_at' => $this->hiredAt->format('Y-m-d'),
+            'years_of_service' => $this->getYearsOfService(),
+            'annual_vacation_days' => $this->calculateAnnualVacationDays(),
+            'vacation_eligible' => $this->isEligibleForVacation(),
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
+        ];
+    }
 }

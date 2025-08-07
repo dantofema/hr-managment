@@ -8,12 +8,13 @@ use InvalidArgumentException;
 
 final readonly class Deductions
 {
+    private const VALID_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY'];
+
     public function __construct(
         private float $taxes,
         private float $socialSecurity,
         private float $healthInsurance,
-        private float $otherDeductions = 0.0,
-        private string $currency = 'USD'
+        private string $currency
     ) {
         if ($taxes < 0) {
             throw new InvalidArgumentException('Taxes cannot be negative');
@@ -27,47 +28,93 @@ final readonly class Deductions
             throw new InvalidArgumentException('Health insurance cannot be negative');
         }
         
-        if ($otherDeductions < 0) {
-            throw new InvalidArgumentException('Other deductions cannot be negative');
-        }
-        
-        if (empty(trim($currency))) {
-            throw new InvalidArgumentException('Currency cannot be empty');
-        }
-        
-        if (strlen($currency) !== 3) {
-            throw new InvalidArgumentException('Currency must be a 3-letter code (e.g., USD, EUR)');
+        if (!in_array($currency, self::VALID_CURRENCIES, true)) {
+            throw new InvalidArgumentException("Invalid currency code: {$currency}");
         }
     }
 
-    public function taxes(): float
+    public function getTaxes(): float
     {
         return $this->taxes;
     }
 
-    public function socialSecurity(): float
+    public function getSocialSecurity(): float
     {
         return $this->socialSecurity;
     }
 
-    public function healthInsurance(): float
+    public function getHealthInsurance(): float
     {
         return $this->healthInsurance;
     }
 
-    public function otherDeductions(): float
-    {
-        return $this->otherDeductions;
-    }
-
-    public function currency(): string
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    public function totalAmount(): float
+    public function getTotal(): float
     {
-        return $this->taxes + $this->socialSecurity + $this->healthInsurance + $this->otherDeductions;
+        return $this->taxes + $this->socialSecurity + $this->healthInsurance;
+    }
+
+    public function add(self $other): self
+    {
+        if ($this->currency !== $other->currency) {
+            throw new InvalidArgumentException("Cannot add different currencies: {$this->currency} and {$other->currency}");
+        }
+
+        return new self(
+            $this->taxes + $other->taxes,
+            $this->socialSecurity + $other->socialSecurity,
+            $this->healthInsurance + $other->healthInsurance,
+            $this->currency
+        );
+    }
+
+    public function getPercentageOf(float $grossSalary): float
+    {
+        if ($grossSalary <= 0) {
+            throw new InvalidArgumentException('Gross salary must be positive');
+        }
+
+        return ($this->getTotal() / $grossSalary) * 100;
+    }
+
+    public function format(): string
+    {
+        return sprintf(
+            'Taxes: %.2f %s, Social Security: %.2f %s, Health Insurance: %.2f %s, Total: %.2f %s',
+            $this->taxes,
+            $this->currency,
+            $this->socialSecurity,
+            $this->currency,
+            $this->healthInsurance,
+            $this->currency,
+            $this->getTotal(),
+            $this->currency
+        );
+    }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            $data['taxes'],
+            $data['social_security'],
+            $data['health_insurance'],
+            $data['currency']
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'taxes' => $this->taxes,
+            'social_security' => $this->socialSecurity,
+            'health_insurance' => $this->healthInsurance,
+            'total' => $this->getTotal(),
+            'currency' => $this->currency
+        ];
     }
 
     public function equals(self $other): bool
@@ -75,20 +122,11 @@ final readonly class Deductions
         return $this->taxes === $other->taxes
             && $this->socialSecurity === $other->socialSecurity
             && $this->healthInsurance === $other->healthInsurance
-            && $this->otherDeductions === $other->otherDeductions
             && $this->currency === $other->currency;
     }
 
     public function __toString(): string
     {
-        return sprintf(
-            'Total: %s %s (Taxes: %.2f, SS: %.2f, Health: %.2f, Other: %.2f)',
-            number_format($this->totalAmount(), 2),
-            $this->currency,
-            $this->taxes,
-            $this->socialSecurity,
-            $this->healthInsurance,
-            $this->otherDeductions
-        );
+        return $this->format();
     }
 }
