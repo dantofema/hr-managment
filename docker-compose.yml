@@ -12,7 +12,7 @@ services:
     depends_on:
       - database
     environment:
-      DATABASE_URL: "postgresql://symfony:change-me@db:5432/symfony?serverVersion=15&charset=utf8"
+      DATABASE_URL: "postgresql://symfony:change-me@database:5432/symfony?serverVersion=15&charset=utf8"
 
   database:
     image: postgres:15-alpine
