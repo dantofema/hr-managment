@@ -34,5 +34,20 @@ services:
     depends_on:
       - app
 
+  cypress:
+    image: cypress/included:13.7.3
+    working_dir: /e2e
+    volumes:
+      - ./frontend:/e2e
+    environment:
+      - CYPRESS_baseUrl=http://192.168.0.14:5173
+    depends_on:
+      - node
+      - app
+    profiles:
+      - testing
+    networks:
+      - default
+
 volumes:
   postgres_data:

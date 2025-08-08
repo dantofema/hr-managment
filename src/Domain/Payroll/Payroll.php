@@ -141,8 +141,8 @@ class Payroll
 
     private function calculateNetSalary(): NetSalary
     {
-        $netAmount = $this->grossSalary->amount() - $this->deductions->totalAmount();
+        $netAmount = $this->grossSalary->getAmount() - $this->deductions->getTotal();
         
-        return new NetSalary($netAmount, $this->grossSalary->currency());
+        return new NetSalary($netAmount, $this->grossSalary->getCurrency());
     }
 }

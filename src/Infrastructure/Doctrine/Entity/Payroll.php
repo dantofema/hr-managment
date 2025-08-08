@@ -56,11 +56,11 @@ class Payroll
     #[Groups(['payroll:read'])]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\ManyToOne(targetEntity: Employee::class)]
+    #[ORM\JoinColumn(name: 'employee_id', referencedColumnName: 'id', nullable: false)]
     #[Groups(['payroll:read', 'payroll:write'])]
-    #[Assert\NotBlank]
-    #[Assert\Uuid]
-    private string $employeeId;
+    #[Assert\NotNull]
+    private Employee $employee;
 
     #[ORM\Column(type: 'date_immutable')]
     #[Groups(['payroll:read', 'payroll:write'])]
@@ -133,11 +133,11 @@ class Payroll
         $this->createdAt = new DateTimeImmutable();
     }
 
-    public static function fromDomain(DomainPayroll $payroll): self
+    public static function fromDomain(DomainPayroll $payroll, Employee $employee): self
     {
         $entity = new self();
         $entity->id = $payroll->getId()->toString();
-        $entity->employeeId = $payroll->getEmployeeId()->toString();
+        $entity->employee = $employee;
         $entity->startDate = $payroll->getPeriod()->getStartDate();
         $entity->endDate = $payroll->getPeriod()->getEndDate();
         $entity->grossSalaryAmount = (string) $payroll->getGrossSalary()->getAmount();
@@ -168,7 +168,7 @@ class Payroll
 
         $payroll = new DomainPayroll(
             new Uuid($this->id),
-            new Uuid($this->employeeId),
+            new Uuid($this->employee->getId()),
             $period,
             $grossSalary,
             $deductions
@@ -235,16 +235,21 @@ class Payroll
         return $this;
     }
 
-    public function getEmployeeId(): string
+    public function getEmployee(): Employee
     {
-        return $this->employeeId;
+        return $this->employee;
     }
 
-    public function setEmployeeId(string $employeeId): self
+    public function setEmployee(Employee $employee): self
     {
-        $this->employeeId = $employeeId;
+        $this->employee = $employee;
         $this->updatedAt = new DateTimeImmutable();
         return $this;
+    }
+
+    public function getEmployeeId(): string
+    {
+        return $this->employee->getId();
     }
 
     public function getStartDate(): DateTimeImmutable

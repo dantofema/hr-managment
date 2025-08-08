@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['employee:read']],
+            provider: \App\Infrastructure\ApiPlatform\Provider\EmployeeCollectionProvider::class,
         ),
         new Get(
             uriTemplate: '/employees/{id}',

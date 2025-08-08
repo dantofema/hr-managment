@@ -57,12 +57,12 @@ class Employee
     {
         $entity = new self();
         $entity->id = $employee->getId()->toString();
-        $entity->firstName = $employee->getFullName()->getFirstName();
-        $entity->lastName = $employee->getFullName()->getLastName();
-        $entity->email = $employee->getEmail()->toString();
-        $entity->position = $employee->getPosition()->toString();
-        $entity->salaryAmount = (string) $employee->getSalary()->getAmount();
-        $entity->salaryCurrency = $employee->getSalary()->getCurrency();
+        $entity->firstName = $employee->getFullName()->firstName();
+        $entity->lastName = $employee->getFullName()->lastName();
+        $entity->email = $employee->getEmail()->value();
+        $entity->position = $employee->getPosition()->value();
+        $entity->salaryAmount = (string) $employee->getSalary()->amount();
+        $entity->salaryCurrency = $employee->getSalary()->currency();
         $entity->hiredAt = $employee->getHiredAt();
         $entity->createdAt = $employee->getCreatedAt();
         $entity->updatedAt = $employee->getUpdatedAt();
