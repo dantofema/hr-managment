@@ -19,26 +19,21 @@ A modern HR management system built with Symfony, TailwindCSS, and Vue.js featur
    cd hr-system
    ```
 
-2. **Start the application with Docker**
+2. **Start the application with Docker (recommended)**
    ```bash
    docker-compose up -d
    ```
+   This will start all services:
+   - Symfony app container (port 8000)
+   - PostgreSQL database (port 5432)
+   - Node.js container with Vite dev server (port 5173)
 
-3. **Install PHP dependencies**
-   ```bash
-   composer install
-   ```
-
-4. **Install Node.js dependencies (for frontend development)**
-   ```bash
-   cd frontend
-   npm install
-   cd ..
-   ```
-
-5. **Access the application**
+3. **Access the application**
    - Main application: http://localhost:8000
+   - Frontend dev server: http://localhost:5173
    - Home page: http://localhost:8000/
+
+**Important**: All development should be done using Docker containers. The Node.js container automatically runs `npm install` and `npm run dev` for hot reloading.
 
 ## 🛠️ Technology Stack
 
@@ -114,19 +109,19 @@ The Counter component demonstrates Vue.js reactivity with increment/decrement fu
 
 #### Vue.js Development and Building
 
-For Vue.js development with automatic rebuilding:
+**Docker-based Development (Recommended):**
+The Node.js container automatically runs `npm run dev` with hot reloading enabled. Simply edit files in `frontend/src/` and changes will be reflected automatically.
 
+**Manual Commands (if needed):**
 ```bash
-cd frontend
-
-# Development mode (with hot reload)
-npm run dev
+# Development mode (runs automatically in Docker)
+docker exec hr-system_node_1 npm run dev
 
 # Production build (compiles to public/js/app.js)
-npm run build
+docker exec hr-system_node_1 npm run build
 
 # Preview production build
-npm run preview
+docker exec hr-system_node_1 npm run preview
 ```
 
 #### TailwindCSS
@@ -135,22 +130,27 @@ TailwindCSS is configured and ready to use. The compiled CSS is located at `publ
 
 **Development Workflow:**
 1. Make changes to Vue.js components in `frontend/src/`
-2. Run `npm run build` to compile assets
-3. Refresh the browser to see changes
+2. Changes are automatically detected and hot-reloaded via Docker
+3. For production builds, run `docker exec hr-system_node_1 npm run build`
 
 ## 🧪 Testing
 
-### Run PHP Tests
+### Run PHP Tests (Docker)
 ```bash
 # Run all tests
-./vendor/bin/phpunit
+docker exec hr-system_app_1 php vendor/bin/phpunit
 
 # Run specific test file
-./vendor/bin/phpunit tests/Controller/HomeControllerTest.php
+docker exec hr-system_app_1 php vendor/bin/phpunit tests/Controller/HomeControllerTest.php
 
 # Run with coverage
-./vendor/bin/phpunit --coverage-html coverage/
+docker exec hr-system_app_1 php vendor/bin/phpunit --coverage-html coverage/
 ```
+
+### Frontend Tests
+Currently, no frontend tests are configured. The frontend functionality is verified through:
+- Manual testing via http://localhost:5173
+- Integration with backend via http://localhost:8000
 
 ### Test Coverage
 - Home page functionality
@@ -175,10 +175,9 @@ This script verifies:
 
 The application uses Docker Compose with the following services:
 
-- **app** - Symfony application (PHP-FPM)
-- **nginx** - Web server
-- **postgres** - PostgreSQL database
-- **node** - Node.js for frontend builds (optional)
+- **app** - Symfony application (PHP 8.2 with built-in server on port 8000)
+- **database** - PostgreSQL 15 database (port 5432)
+- **node** - Node.js 18 container running Vite dev server (port 5173)
 
 ### Docker Commands
 
@@ -228,31 +227,48 @@ The database is automatically configured via Docker. Connection details:
 
 ## 🚨 Troubleshooting
 
-### Common Issues
+### Common Docker Issues
 
-1. **Styles not showing**
-   - Verify `public/css/app.css` exists and is accessible
-   - Check browser console for 404 errors
-   - Ensure TailwindCSS classes are properly compiled
+1. **Port already in use errors**
+   ```bash
+   # Check what's using the port
+   lsof -i :5173  # or :8000, :5432
+   
+   # Kill the process
+   kill -9 <PID>
+   
+   # Remove old containers
+   docker rm hr-system_node_1
+   ```
 
-2. **Docker permission issues**
-   - Run `sudo chown -R $USER:$USER .` to fix file permissions
-   - Ensure Docker daemon is running
+2. **Node container fails to start**
+   - Ensure no local npm/node processes are running on port 5173
+   - Remove old containers: `docker-compose down && docker-compose up -d`
+   - Check logs: `docker logs hr-system_node_1`
 
-3. **Database connection errors**
+3. **Hot reloading not working**
+   - Verify Vite is configured with `host: '0.0.0.0'` and `usePolling: true`
+   - Restart node container: `docker-compose restart node`
+   - Check if files are being watched: `docker logs hr-system_node_1`
+
+4. **Database connection errors**
    - Verify PostgreSQL container is running: `docker-compose ps`
-   - Check database credentials in `.env.local`
+   - Check database credentials in docker-compose.yml
+   - Wait for database to fully start before accessing app
 
-4. **Frontend build issues**
-   - Clear node_modules: `rm -rf frontend/node_modules && cd frontend && npm install`
-   - Check Node.js version compatibility
+5. **Frontend build issues**
+   - Restart node container: `docker-compose restart node`
+   - Rebuild containers: `docker-compose up -d --build`
+   - Check Node.js container logs for errors
 
 ### Development Tips
 
 - Use `docker-compose logs -f app` to monitor application logs
 - Access the application container with `docker-compose exec app bash`
-- Database migrations: `php bin/console doctrine:migrations:migrate`
-- Clear Symfony cache: `php bin/console cache:clear`
+- Database migrations: `docker exec hr-system_app_1 php bin/console doctrine:migrations:migrate`
+- Clear Symfony cache: `docker exec hr-system_app_1 php bin/console cache:clear`
+- Run tests: `docker exec hr-system_app_1 php vendor/bin/phpunit`
+- Build frontend for production: `docker exec hr-system_node_1 npm run build`
 
 ## 📝 API Documentation
 
