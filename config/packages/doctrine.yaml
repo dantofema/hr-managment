@@ -21,8 +21,8 @@ doctrine:
             App:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/ApiResource'
-                prefix: 'App\ApiResource'
+                dir: '%kernel.project_dir%/src/Infrastructure/Doctrine/Entity'
+                prefix: 'App\Infrastructure\Doctrine\Entity'
                 alias: App
         controller_resolver:
             auto_mapping: false

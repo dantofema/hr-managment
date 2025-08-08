@@ -1,7 +1,34 @@
 api_platform:
-    title: Hello API Platform
-    version: 1.0.0
-    defaults:
-        stateless: true
-        cache_headers:
-            vary: ['Content-Type', 'Authorization', 'Origin']
+  title: 'HR System API'
+  description: 'Sistema moderno de gestión de RRHH - API Documentation'
+  version: '1.0.0'
+
+  # Configuración de mapeo de recursos
+  mapping:
+    paths:
+      - '%kernel.project_dir%/src/Infrastructure/ApiResource'
+
+  # Configuración de la documentación OpenAPI/Swagger
+  swagger:
+    api_keys:
+      apiKey:
+        name: Authorization
+        type: header
+
+  # Configuración por defecto
+  defaults:
+    stateless: true
+    cache_headers:
+      vary: [ 'Content-Type', 'Authorization', 'Origin' ]
+
+  # Configuración de formatos
+  formats:
+    jsonld: [ 'application/ld+json' ]
+    json: [ 'application/json' ]
+    html: [ 'text/html' ]
+
+  # Configuración de documentación
+  docs_formats:
+    jsonld: [ 'application/ld+json' ]
+    json: [ 'application/json' ]
+    html: [ 'text/html' ]
