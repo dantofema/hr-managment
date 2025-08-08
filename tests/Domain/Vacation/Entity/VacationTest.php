@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Domain\Vacation\Entity;
 
 use App\Domain\Shared\ValueObject\Uuid;
-use App\Domain\Vacation\Entity\Vacation;
+use App\Domain\Vacation\Vacation;
 use App\Domain\Vacation\ValueObject\VacationPeriod;
 use App\Domain\Vacation\ValueObject\VacationStatus;
 use PHPUnit\Framework\TestCase;

@@ -14,7 +14,7 @@ use ApiPlatform\Metadata\Patch;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Domain\Vacation\Entity\Vacation as DomainVacation;
+use App\Domain\Vacation\Vacation as DomainVacation;
 use App\Domain\Employee\ValueObject\Uuid;
 use App\Domain\Vacation\ValueObject\VacationPeriod;
 use App\Domain\Vacation\ValueObject\VacationStatus;

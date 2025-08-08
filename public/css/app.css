@@ -82,6 +82,56 @@ body {
 .divide-y > :not([hidden]) ~ :not([hidden]) { border-top-width: 1px; }
 .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: #e5e7eb; }
 
+/* Additional Vue.js Component Styles */
+.max-w-2xl { max-width: 42rem; }
+.space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.text-gray-800 { color: #1f2937; }
+.text-gray-600 { color: #4b5563; }
+.mb-2 { margin-bottom: 0.5rem; }
+.p-6 { padding: 1.5rem; }
+.w-full { width: 100%; }
+.mt-8 { margin-top: 2rem; }
+
+/* Counter Component Styles */
+.bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+.from-purple-50 { --tw-gradient-from: #faf5ff; --tw-gradient-to: rgb(250 245 255 / 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.to-pink-50 { --tw-gradient-to: #fdf2f8; }
+.rounded-xl { border-radius: 0.75rem; }
+.border-purple-200 { border-color: #e9d5ff; }
+.text-purple-800 { color: #6b21a8; }
+.text-purple-700 { color: #7c3aed; }
+.space-x-6 > :not([hidden]) ~ :not([hidden]) { margin-left: 1.5rem; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.bg-red-500 { background-color: #ef4444; }
+.bg-red-600 { background-color: #dc2626; }
+.hover\:bg-red-600:hover { background-color: #dc2626; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.rounded-full { border-radius: 9999px; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.duration-200 { transition-duration: 200ms; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+.hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+.disabled\:opacity-50:disabled { opacity: 0.5; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+.min-w-\[80px\] { min-width: 80px; }
+.text-center { text-align: center; }
+.bg-green-600 { background-color: #16a34a; }
+.hover\:bg-green-600:hover { background-color: #16a34a; }
+.bg-gray-500 { background-color: #6b7280; }
+.bg-gray-600 { background-color: #4b5563; }
+.hover\:bg-gray-600:hover { background-color: #4b5563; }
+.font-medium { font-weight: 500; }
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-green-600 { color: #16a34a; }
+.mt-4 { margin-top: 1rem; }
+.opacity-50 { opacity: 0.5; }
+.cursor-not-allowed { cursor: not-allowed; }
+
 /* Responsive utilities */
 @media (min-width: 640px) {
   .sm\:py-12 { padding-top: 3rem; padding-bottom: 3rem; }

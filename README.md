@@ -1,6 +1,6 @@
 # HR System
 
-A modern HR management system built with Symfony, TailwindCSS, and Vue.js.
+A modern HR management system built with Symfony, TailwindCSS, and Vue.js featuring interactive components.
 
 ## 🚀 Quick Start
 
@@ -98,17 +98,45 @@ Vue.js components are located in `frontend/src/` directory.
 **Key files:**
 - `frontend/src/main.js` - Vue.js entry point
 - `frontend/src/App.vue` - Main Vue component
+- `frontend/src/components/Counter.vue` - Interactive counter component
 - `frontend/vite.config.js` - Vite configuration
+
+**Vue.js Components:**
+
+#### Counter Component
+The Counter component demonstrates Vue.js reactivity with increment/decrement functionality:
+- **Features**: Increment, decrement, reset buttons
+- **Validation**: Prevents negative values
+- **Styling**: TailwindCSS with gradient backgrounds and hover effects
+- **State Management**: Tracks current count and total clicks
 
 ### Building Assets
 
-Currently, the CSS is manually compiled. For development with automatic rebuilding:
+#### Vue.js Development and Building
+
+For Vue.js development with automatic rebuilding:
 
 ```bash
 cd frontend
-# Note: npm run dev is not configured yet
-# Manual compilation may be needed for now
+
+# Development mode (with hot reload)
+npm run dev
+
+# Production build (compiles to public/js/app.js)
+npm run build
+
+# Preview production build
+npm run preview
 ```
+
+#### TailwindCSS
+
+TailwindCSS is configured and ready to use. The compiled CSS is located at `public/css/app.css`.
+
+**Development Workflow:**
+1. Make changes to Vue.js components in `frontend/src/`
+2. Run `npm run build` to compile assets
+3. Refresh the browser to see changes
 
 ## 🧪 Testing
 
@@ -128,6 +156,20 @@ cd frontend
 - Home page functionality
 - TailwindCSS integration
 - Vue.js component rendering
+- Counter component functionality
+
+### Vue.js Integration Testing
+
+Run the Vue.js integration test script:
+```bash
+node test_vue_integration.js
+```
+
+This script verifies:
+- Home page accessibility
+- Vue.js app container presence
+- JavaScript and CSS file loading
+- Vue.js content compilation
 
 ## 🐳 Docker Services
 
