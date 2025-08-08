@@ -30,7 +30,7 @@ A modern HR management system built with Symfony, TailwindCSS, and Vue.js featur
 
 3. **Access the application**
    - Main application: http://localhost:8000
-   - Frontend dev server: http://localhost:5173
+   - Frontend dev server: http://localhost:5173 (or the port indicated in the terminal, e.g., http://localhost:5174)
    - Home page: http://localhost:8000/
 
 **Important**: All development should be done using Docker containers. The Node.js container automatically runs `npm install` and `npm run dev` for hot reloading.
@@ -95,6 +95,13 @@ Vue.js components are located in `frontend/src/` directory.
 - `frontend/src/App.vue` - Main Vue component
 - `frontend/src/components/Counter.vue` - Interactive counter component
 - `frontend/vite.config.js` - Vite configuration
+- `frontend/.env` - Environment variables (including VITE_PORT)
+
+**Port Configuration:**
+Vite is configured to use port 5173 by default, but will automatically switch to the next available port (e.g., 5174) if there's a conflict. You can:
+- Set a specific port in `frontend/.env`: `VITE_PORT=5173`
+- Check the terminal output to see which port Vite is actually using
+- Access the frontend at the port shown in the Docker logs: `docker logs hr-system_node_1`
 
 **Vue.js Components:**
 
@@ -240,6 +247,12 @@ The database is automatically configured via Docker. Connection details:
    # Remove old containers
    docker rm hr-system_node_1
    ```
+   
+   **Alternative**: If Vite automatically switches ports (e.g., to 5174), check the actual port in use:
+   ```bash
+   docker logs hr-system_node_1
+   ```
+   Then access the frontend at the port shown in the logs.
 
 2. **Node container fails to start**
    - Ensure no local npm/node processes are running on port 5173
