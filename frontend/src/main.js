@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import "./input.css";
 
 console.log("Vue.js main.js is executing...");
 console.log("Looking for #app element:", document.querySelector("#app"));

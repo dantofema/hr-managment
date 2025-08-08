@@ -12,13 +12,18 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist',
+    outDir: '../public',
     rollupOptions: {
       input: './src/main.js',
       output: {
-        entryFileNames: 'app.js',
-        chunkFileNames: '[name].js',
-        assetFileNames: '[name].[ext]'
+        entryFileNames: 'js/app.js',
+        chunkFileNames: 'js/[name].js',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+            return 'css/app.css';
+          }
+          return 'assets/[name].[ext]';
+        }
       }
     }
   }
