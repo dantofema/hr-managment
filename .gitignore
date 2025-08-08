@@ -8,6 +8,6 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-/prompts
+/promts
 /.idea
 /frontend/node_modules
