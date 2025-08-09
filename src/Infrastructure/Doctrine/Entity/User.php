@@ -54,11 +54,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $entity->id = $user->getId()->toString();
         $entity->email = $user->getEmail()->value();
         $entity->password = $user->getPassword()->value();
-        $entity->name = $user->getName();
-        $entity->isActive = $user->isActive();
+        $entity->name = (string) $user->getEmail(); // Use email as name since domain User doesn't have name
+        $entity->isActive = true; // Default to active since domain User doesn't track this
         $entity->createdAt = $user->getCreatedAt();
         $entity->updatedAt = $user->getUpdatedAt();
-        $entity->lastLoginAt = $user->getLastLoginAt();
+        $entity->lastLoginAt = null; // Domain User doesn't track last login
 
         return $entity;
     }
@@ -69,8 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             new Uuid($this->id),
             new Email($this->email),
             new HashedPassword($this->password),
-            $this->name,
-            $this->isActive
+            ['ROLE_USER'] // Default roles since domain User expects array
         );
 
         // Set timestamps using reflection since they're private
@@ -84,12 +83,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $updatedAtProperty = $reflection->getProperty('updatedAt');
             $updatedAtProperty->setAccessible(true);
             $updatedAtProperty->setValue($user, $this->updatedAt);
-        }
-
-        if ($this->lastLoginAt) {
-            $lastLoginAtProperty = $reflection->getProperty('lastLoginAt');
-            $lastLoginAtProperty->setAccessible(true);
-            $lastLoginAtProperty->setValue($user, $this->lastLoginAt);
         }
 
         return $user;

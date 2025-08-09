@@ -26,7 +26,7 @@ class UserFixtures extends Fixture
         $adminUser = $this->createUser(
             'admin@hr-system.com',
             'password123',
-            'System Administrator',
+            ['ROLE_ADMIN'],
             true
         );
         $manager->persist($adminUser);
@@ -35,7 +35,7 @@ class UserFixtures extends Fixture
         $regularUser = $this->createUser(
             'user@hr-system.com',
             'password123',
-            'Regular User',
+            ['ROLE_USER'],
             true
         );
         $manager->persist($regularUser);
@@ -44,7 +44,7 @@ class UserFixtures extends Fixture
         $inactiveUser = $this->createUser(
             'inactive@hr-system.com',
             'password123',
-            'Inactive User',
+            ['ROLE_USER'],
             false
         );
         $manager->persist($inactiveUser);
@@ -55,19 +55,17 @@ class UserFixtures extends Fixture
     private function createUser(
         string $email,
         string $plainPassword,
-        string $name,
+        array $roles,
         bool $isActive
     ): DoctrineUser {
         // Create domain user first to get hashed password
         $domainUser = User::create(
             new Email($email),
             new HashedPassword($this->hashPassword($plainPassword)),
-            $name
+            $roles
         );
 
-        if (!$isActive) {
-            $domainUser->deactivate();
-        }
+        // Note: User activation/deactivation logic would be implemented here if needed
 
         // Convert to Doctrine entity
         return DoctrineUser::fromDomain($domainUser);

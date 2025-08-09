@@ -6,13 +6,15 @@ namespace App\Infrastructure\ApiPlatform\Provider;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
+use ApiPlatform\State\Pagination\Pagination;
 use App\Infrastructure\ApiResource\Employee;
 use App\Domain\Employee\EmployeeRepository;
 
 final readonly class EmployeeCollectionProvider implements ProviderInterface
 {
     public function __construct(
-        private EmployeeRepository $employeeRepository
+        private EmployeeRepository $employeeRepository,
+        private Pagination $pagination
     ) {
     }
 
@@ -30,7 +32,7 @@ final readonly class EmployeeCollectionProvider implements ProviderInterface
             $apiEmployee->position = $employee->getPosition()->value();
             $apiEmployee->salaryAmount = $employee->getSalary()->amount();
             $apiEmployee->salaryCurrency = $employee->getSalary()->currency();
-            $apiEmployee->hiredAt = $employee->getHiredAt();
+            $apiEmployee->hiredAt = $employee->getHiredAt()->format('Y-m-d');
             $apiEmployee->createdAt = $employee->getCreatedAt();
             $apiEmployee->updatedAt = $employee->getUpdatedAt();
             $apiEmployee->fullName = $employee->getFullName()->fullName();
@@ -41,6 +43,14 @@ final readonly class EmployeeCollectionProvider implements ProviderInterface
             $apiEmployees[] = $apiEmployee;
         }
         
-        return $apiEmployees;
+        // Apply pagination manually since we're using a custom provider
+        $page = $context['filters']['page'] ?? 1;
+        $itemsPerPage = $operation->getPaginationItemsPerPage() ?? 20;
+        $offset = ($page - 1) * $itemsPerPage;
+        
+        $totalItems = count($apiEmployees);
+        $paginatedItems = array_slice($apiEmployees, $offset, $itemsPerPage);
+        
+        return $this->pagination->paginate($paginatedItems, $totalItems, $page, $itemsPerPage);
     }
 }

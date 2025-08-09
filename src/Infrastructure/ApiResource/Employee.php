@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(
             uriTemplate: '/employees/{id}',
             normalizationContext: ['groups' => ['employee:read', 'employee:item']],
+            provider: \App\Infrastructure\ApiPlatform\Provider\EmployeeItemProvider::class,
         ),
         new Post(
             denormalizationContext: ['groups' => ['employee:write']],
@@ -49,61 +50,61 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Employee
 {
     #[Groups(['employee:read'])]
-    public string $id;
+    public string $id = '';
 
     #[Groups(['employee:read', 'employee:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 100)]
-    public string $firstName;
+    public string $firstName = '';
 
     #[Groups(['employee:read', 'employee:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 100)]
-    public string $lastName;
+    public string $lastName = '';
 
     #[Groups(['employee:read', 'employee:write'])]
     #[Assert\NotBlank]
     #[Assert\Email]
-    public string $email;
+    public string $email = '';
 
     #[Groups(['employee:read', 'employee:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 100)]
-    public string $position;
+    public string $position = '';
 
     #[Groups(['employee:read', 'employee:write'])]
     #[Assert\NotBlank]
     #[Assert\Positive]
-    public float $salaryAmount;
+    public float $salaryAmount = 0.0;
 
     #[Groups(['employee:read', 'employee:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(exactly: 3)]
-    public string $salaryCurrency;
+    public string $salaryCurrency = '';
 
     #[Groups(['employee:read', 'employee:write'])]
-    #[Assert\NotNull]
-    #[Assert\Type(\DateTimeImmutable::class)]
-    public \DateTimeImmutable $hiredAt;
+    #[Assert\NotBlank]
+    #[Assert\Date(message: 'The hire date must be a valid date in YYYY-MM-DD format.')]
+    public string $hiredAt = '';
 
     #[Groups(['employee:read'])]
-    public \DateTimeImmutable $createdAt;
+    public ?\DateTimeImmutable $createdAt = null;
 
     #[Groups(['employee:read'])]
     public ?\DateTimeImmutable $updatedAt = null;
 
     // Computed properties - values set from Application layer
     #[Groups(['employee:read', 'employee:item'])]
-    public string $fullName;
+    public string $fullName = '';
 
     #[Groups(['employee:read', 'employee:item'])]
-    public int $yearsOfService;
+    public int $yearsOfService = 0;
 
     #[Groups(['employee:read', 'employee:item'])]
-    public int $annualVacationDays;
+    public int $annualVacationDays = 0;
 
     #[Groups(['employee:read', 'employee:item'])]
-    public bool $vacationEligible;
+    public bool $vacationEligible = false;
 
     public static function fromApplicationDTO(EmployeeResponse $dto): self
     {
@@ -114,7 +115,7 @@ class Employee
         $resource->position = $dto->position;
         $resource->salaryAmount = $dto->salaryAmount;
         $resource->salaryCurrency = $dto->salaryCurrency;
-        $resource->hiredAt = new \DateTimeImmutable($dto->hiredAt);
+        $resource->hiredAt = $dto->hiredAt;
         $resource->yearsOfService = $dto->yearsOfService;
         $resource->annualVacationDays = $dto->annualVacationDays;
         $resource->vacationEligible = $dto->vacationEligible;
