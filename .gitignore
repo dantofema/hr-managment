@@ -12,6 +12,7 @@
 /.idea
 /frontend/node_modules
 /frontend/cypress
+/.phpunit.result.cache
 
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
