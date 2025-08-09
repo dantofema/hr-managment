@@ -9,8 +9,17 @@ services:
       - .:/var/www/html
     depends_on:
       - database
+    env_file:
+      - .env
     environment:
       DATABASE_URL: "postgresql://symfony:change-me@database:5432/symfony?serverVersion=15&charset=utf8"
+    networks:
+      - hr-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   database:
     image: postgres:15-alpine
@@ -22,6 +31,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hr-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U symfony"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   node:
     image: node:18-alpine
@@ -30,9 +46,13 @@ services:
       - ./frontend:/app
     ports:
       - "5173:5173"
-    command: sh -c "npm install && npm run dev"
+    environment:
+      - VITE_API_URL=http://app:8000/api
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     depends_on:
       - app
+    networks:
+      - hr-network
 
   cypress:
     image: cypress/included:13.7.3
@@ -40,14 +60,18 @@ services:
     volumes:
       - ./frontend:/e2e
     environment:
-      - CYPRESS_baseUrl=http://192.168.0.14:5173
+      - CYPRESS_baseUrl=http://node:5173
     depends_on:
       - node
       - app
     profiles:
       - testing
     networks:
-      - default
+      - hr-network
 
 volumes:
   postgres_data:
+
+networks:
+  hr-network:
+    driver: bridge

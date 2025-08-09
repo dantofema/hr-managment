@@ -8,7 +8,9 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-/prompts
-/arq
+/agents
 /.idea
 /frontend/node_modules
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
