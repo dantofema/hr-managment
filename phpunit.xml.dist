@@ -13,11 +13,26 @@
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
         <env name="KERNEL_CLASS" value="App\Kernel" />
+        <server name="DATABASE_URL" value="postgresql://app:!ChangeMe!@127.0.0.1:5432/app_test?serverVersion=16&amp;charset=utf8" />
     </php>
 
     <testsuites>
         <testsuite name="Project Test Suite">
             <directory>tests</directory>
+        </testsuite>
+        <testsuite name="critical">
+            <file>tests/Domain/Employee/Entity/EmployeeTest.php</file>
+            <file>tests/Application/UseCase/Employee/CreateEmployee/CreateEmployeeHandlerTest.php</file>
+            <file>tests/Application/UseCase/Employee/GetEmployee/GetEmployeeHandlerTest.php</file>
+            <file>tests/Infrastructure/Controller/Api/EmployeeControllerTest.php</file>
+            <file>tests/Api/EmployeeApiTest.php</file>
+        </testsuite>
+        <testsuite name="domain">
+            <directory>tests/Domain/Employee/</directory>
+        </testsuite>
+        <testsuite name="api">
+            <directory>tests/Infrastructure/Controller/Api/</directory>
+            <directory>tests/Api/</directory>
         </testsuite>
     </testsuites>
 

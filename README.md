@@ -414,7 +414,7 @@ hr-system/
 
 - [📄 DDD Refactoring Summary](./DDD_REFACTORING_SUMMARY.md) - Detalles del
   refactoring a DDD
-- [📄 Prompt Técnico](./promts/prompt-prueba-tecnica.md) - Especificaciones del
+- [📄 Prompt Técnico](prompts/prompt-prueba-tecnica.md) - Especificaciones del
   proyecto
 - [🔗 API Documentation](http://localhost:8000/api/docs) - Documentación
   interactiva de la API

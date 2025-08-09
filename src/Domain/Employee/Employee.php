@@ -159,10 +159,10 @@ class Employee
     {
         return [
             'id' => $this->id->toString(),
-            'full_name' => $this->fullName->toString(),
-            'email' => $this->email->toString(),
-            'position' => $this->position->toString(),
-            'salary' => $this->salary->toString(),
+            'full_name' => (string) $this->fullName,
+            'email' => (string) $this->email,
+            'position' => (string) $this->position,
+            'salary' => (string) $this->salary,
             'hired_at' => $this->hiredAt->format('Y-m-d'),
             'years_of_service' => $this->getYearsOfService(),
             'annual_vacation_days' => $this->calculateAnnualVacationDays(),
