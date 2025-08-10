@@ -310,16 +310,21 @@ Accede a la documentación completa de la API en:
 ### Backend Tests
 
 ```bash
-# Ejecutar todos los tests
-docker-compose exec app php bin/phpunit
+# Ejecutar todos los tests (IMPORTANTE: usar APP_ENV=test)
+docker-compose exec app env APP_ENV=test vendor/bin/phpunit
+
+# Con log de resultados
+docker-compose exec app env APP_ENV=test vendor/bin/phpunit --log-junit agents/logs/phpunit.log
 
 # Tests específicos
-docker-compose exec app php bin/phpunit tests/Domain/Employee/
-docker-compose exec app php bin/phpunit tests/Api/
+docker-compose exec app env APP_ENV=test vendor/bin/phpunit tests/Domain/Employee/
+docker-compose exec app env APP_ENV=test vendor/bin/phpunit tests/Api/
 
 # Con cobertura
-docker-compose exec app php bin/phpunit --coverage-html coverage/
+docker-compose exec app env APP_ENV=test vendor/bin/phpunit --coverage-html coverage/
 ```
+
+> **⚠️ Importante**: Es necesario usar `env APP_ENV=test` antes del comando PHPUnit en Docker para evitar errores de configuración del framework de testing. Sin esto, los tests fallarán con el error "Could not find service 'test.service_container'".
 
 ### Frontend Tests
 

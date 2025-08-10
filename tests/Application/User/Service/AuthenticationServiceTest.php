@@ -39,7 +39,7 @@ class AuthenticationServiceTest extends TestCase
         
         $user = User::create(
             new Email($email),
-            new HashedPassword('hashed_password'),
+            HashedPassword::fromPlainPassword('password123'),
             ['ROLE_USER']
         );
 
@@ -87,7 +87,7 @@ class AuthenticationServiceTest extends TestCase
         
         $user = User::create(
             new Email($email),
-            new HashedPassword('hashed_password'),
+            HashedPassword::fromPlainPassword('correct_password'),
             ['ROLE_USER']
         );
 
@@ -112,7 +112,7 @@ class AuthenticationServiceTest extends TestCase
     {
         $user = User::create(
             new Email('test@example.com'),
-            new HashedPassword('hashed_password'),
+            HashedPassword::fromPlainPassword('password123'),
             ['ROLE_USER']
         );
         $password = 'password123';
@@ -133,7 +133,7 @@ class AuthenticationServiceTest extends TestCase
         $email = 'test@example.com';
         $user = User::create(
             new Email($email),
-            new HashedPassword('hashed_password'),
+            HashedPassword::fromPlainPassword('password123'),
             ['ROLE_USER']
         );
 

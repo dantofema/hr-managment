@@ -44,7 +44,7 @@ class CreateEmployeeHandlerTest extends TestCase
                     && $employee->getFullName()->getLastName() === 'Doe'
                     && $employee->getEmail()->toString() === 'john.doe@example.com'
                     && $employee->getPosition()->toString() === 'Software Developer'
-                    && $employee->getSalary()->getAmount() === 50000
+                    && $employee->getSalary()->getAmount() === 50000.0
                     && $employee->getSalary()->getCurrency() === 'USD'
                     && $employee->getHiredAt()->format('Y-m-d') === '2024-01-15';
             }));
@@ -188,6 +188,7 @@ class CreateEmployeeHandlerTest extends TestCase
     public function testHandlerWithDifferentCurrencies(): void
     {
         $currencies = ['USD', 'EUR', 'GBP', 'CAD'];
+        $lastNames = ['Smith', 'Johnson', 'Williams', 'Brown'];
         $responses = [];
 
         $this->employeeRepository
@@ -197,7 +198,7 @@ class CreateEmployeeHandlerTest extends TestCase
         foreach ($currencies as $index => $currency) {
             $command = new CreateEmployeeCommand(
                 firstName: 'Employee',
-                lastName: (string)$index,
+                lastName: $lastNames[$index],
                 email: "employee{$index}@example.com",
                 position: 'Developer',
                 salaryAmount: 50000.0,

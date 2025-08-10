@@ -12,11 +12,11 @@ final readonly class FullName
         private string $firstName,
         private string $lastName
     ) {
-        if (empty(trim($firstName))) {
+        if (trim($firstName) === '') {
             throw new InvalidArgumentException('First name cannot be empty');
         }
         
-        if (empty(trim($lastName))) {
+        if (trim($lastName) === '') {
             throw new InvalidArgumentException('Last name cannot be empty');
         }
     }

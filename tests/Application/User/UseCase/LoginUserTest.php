@@ -50,7 +50,7 @@ class LoginUserTest extends TestCase
         $request = new LoginRequest($email, $password);
         $user = User::create(
             new Email($email),
-            new HashedPassword('hashed_password'),
+            HashedPassword::fromPlainPassword('test_password'),
             ['ROLE_USER']
         );
 

@@ -10,9 +10,16 @@ final readonly class HashedPassword
 {
     public function __construct(private string $value)
     {
-        if (empty($value)) {
-            throw new InvalidArgumentException('Password cannot be empty');
+        if (empty($value) || !$this->isValidHashFormat($value)) {
+            throw new InvalidArgumentException('Invalid hashed password format');
         }
+    }
+
+    private function isValidHashFormat(string $hash): bool
+    {
+        // Check if it's a valid password hash format
+        // PHP password hashes typically start with $2y$ (bcrypt), $argon2i$, $argon2id$, etc.
+        return password_get_info($hash)['algo'] !== null;
     }
 
     public static function fromPlainPassword(string $plainPassword): self

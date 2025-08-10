@@ -8,9 +8,10 @@ use App\Domain\Shared\ValueObject\Uuid;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\HashedPassword;
 use DateTimeImmutable;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     private Uuid $id;
     private Email $email;
@@ -55,7 +56,12 @@ class User implements UserInterface
         return $this->email;
     }
 
-    public function getPassword(): HashedPassword
+    public function getPassword(): ?string
+    {
+        return (string) $this->password;
+    }
+
+    public function getHashedPassword(): HashedPassword
     {
         return $this->password;
     }

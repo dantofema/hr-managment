@@ -30,7 +30,7 @@ final readonly class GetEmployeeHandler
             $employee->getId()->toString(),
             $employee->getFullName()->getFirstName() . ' ' . $employee->getFullName()->getLastName(),
             $employee->getEmail()->toString(),
-            $employee->getPosition()->toString(),
+            $employee->getPosition()->value(),
             $employee->getSalary()->getAmount(),
             $employee->getSalary()->getCurrency(),
             $employee->getHiredAt()->format('Y-m-d'),

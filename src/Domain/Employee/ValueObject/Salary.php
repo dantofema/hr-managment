@@ -35,6 +35,16 @@ final readonly class Salary
         return $this->currency;
     }
 
+    public function getAmount(): float
+    {
+        return $this->amount;
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
     public function equals(self $other): bool
     {
         return $this->amount === $other->amount 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Controller;
 
-use App\Domain\User\User;
+use App\Infrastructure\Doctrine\Entity\User;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\HashedPassword;
 use App\Domain\Shared\ValueObject\Uuid;
@@ -36,21 +36,23 @@ class AuthControllerTest extends WebTestCase
     public function testLoginCheckWithValidCredentials(): void
     {
         $client = static::createClient();
+        $entityManager = $this->getEntityManager();
         
         // Create a test user
-        $testUser = User::create(
-            new Email('test@example.com'),
-            HashedPassword::fromPlainPassword('password123')
-        );
-        
-        $entityManager = $this->getEntityManager();
+        $testUser = new User();
+        $testUserId = uniqid('test-user-1-');
+        $testUserEmail = 'test-' . uniqid() . '@example.com';
+        $testUser->setId($testUserId)
+                 ->setEmail($testUserEmail)
+                 ->setPassword(HashedPassword::fromPlainPassword('password123')->value())
+                 ->setName('Test User');
         $entityManager->persist($testUser);
         $entityManager->flush();
         
         $client->request('POST', '/api/login_check', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], json_encode([
-            'email' => 'test@example.com',
+            'email' => $testUserEmail,
             'password' => 'password123'
         ]));
         
@@ -60,7 +62,7 @@ class AuthControllerTest extends WebTestCase
         $responseData = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('token', $responseData);
         $this->assertArrayHasKey('user', $responseData);
-        $this->assertEquals('test@example.com', $responseData['user']['email']);
+        $this->assertEquals($testUserEmail, $responseData['user']['email']);
         $this->assertEquals('Test User', $responseData['user']['name']);
     }
 
@@ -101,14 +103,16 @@ class AuthControllerTest extends WebTestCase
     public function testProtectedRouteWithValidToken(): void
     {
         $client = static::createClient();
+        $entityManager = $this->getEntityManager();
         
         // Create a test user
-        $testUser = User::create(
-            new Email('test2@example.com'),
-            HashedPassword::fromPlainPassword('password123')
-        );
-        
-        $entityManager = $this->getEntityManager();
+        $testUser = new User();
+        $testUserId = uniqid('test-user-2-');
+        $testUserEmail = 'test2-' . uniqid() . '@example.com';
+        $testUser->setId($testUserId)
+                 ->setEmail($testUserEmail)
+                 ->setPassword(HashedPassword::fromPlainPassword('password123')->value())
+                 ->setName('Test User 2');
         $entityManager->persist($testUser);
         $entityManager->flush();
         
@@ -116,7 +120,7 @@ class AuthControllerTest extends WebTestCase
         $client->request('POST', '/api/login_check', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], json_encode([
-            'email' => 'test2@example.com',
+            'email' => $testUserEmail,
             'password' => 'password123'
         ]));
         
@@ -137,12 +141,14 @@ class AuthControllerTest extends WebTestCase
     {
         parent::tearDown();
         
-        // Clean up test data
-        $entityManager = $this->getEntityManager();
-        $entityManager->createQuery('DELETE FROM App\Domain\User\User u WHERE u.email LIKE :email')
-            ->setParameter('email', 'test%@example.com')
-            ->execute();
-        
-        $entityManager->close();
+        // Clean up test data - only if kernel is already booted
+        if (static::$kernel !== null) {
+            $entityManager = $this->getEntityManager();
+            $entityManager->createQuery('DELETE FROM App\Infrastructure\Doctrine\Entity\User u WHERE u.email LIKE :email')
+                ->setParameter('email', 'test%@example.com')
+                ->execute();
+            
+            $entityManager->close();
+        }
     }
 }

@@ -43,8 +43,8 @@ final readonly class EmployeeItemProvider implements ProviderInterface
             $apiEmployee->salaryAmount = $employee->getSalary()->amount();
             $apiEmployee->salaryCurrency = $employee->getSalary()->currency();
             $apiEmployee->hiredAt = $employee->getHiredAt()->format('Y-m-d');
-            $apiEmployee->createdAt = $employee->getCreatedAt()?->format('c');
-            $apiEmployee->updatedAt = $employee->getUpdatedAt()?->format('c');
+            $apiEmployee->createdAt = $employee->getCreatedAt();
+            $apiEmployee->updatedAt = $employee->getUpdatedAt();
             $apiEmployee->fullName = $employee->getFullName()->fullName();
             $apiEmployee->yearsOfService = $employee->getYearsOfService();
             $apiEmployee->annualVacationDays = $employee->calculateAnnualVacationDays();

@@ -29,7 +29,7 @@ class JwtTokenServiceTest extends TestCase
     {
         $user = User::create(
             new Email('test@example.com'),
-            new HashedPassword('hashed_password'),
+            HashedPassword::fromPlainPassword('test_password'),
             ['ROLE_USER']
         );
 
