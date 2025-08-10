@@ -31,6 +31,16 @@ final readonly class FullName
         return $this->lastName;
     }
 
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
     public function fullName(): string
     {
         return $this->firstName . ' ' . $this->lastName;

@@ -20,10 +20,18 @@ final readonly class CreateEmployeeHandler
 
     public function handle(CreateEmployeeCommand $command): CreateEmployeeResponse
     {
+        // Check for duplicate email
+        $email = new Email($command->email);
+        $existingEmployee = $this->employeeRepository->findByEmail($email);
+        
+        if ($existingEmployee !== null) {
+            throw new \InvalidArgumentException('An employee with this email already exists');
+        }
+
         $employee = new Employee(
             Uuid::generate(),
             new FullName($command->firstName, $command->lastName),
-            new Email($command->email),
+            $email,
             new Position($command->position),
             new Salary($command->salaryAmount, $command->salaryCurrency),
             $command->hiredAt
@@ -33,9 +41,9 @@ final readonly class CreateEmployeeHandler
 
         return new CreateEmployeeResponse(
             $employee->getId()->toString(),
-            $employee->getFullName()->getFirstName() . ' ' . $employee->getFullName()->getLastName(),
+            $employee->getFullName()->fullName(),
             $employee->getEmail()->toString(),
-            $employee->getPosition()->toString(),
+            $employee->getPosition()->value(),
             $employee->getSalary()->getAmount(),
             $employee->getSalary()->getCurrency(),
             $employee->getHiredAt()->format('Y-m-d'),

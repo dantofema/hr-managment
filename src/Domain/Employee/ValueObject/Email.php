@@ -25,6 +25,11 @@ final readonly class Email
         return $this->value === $other->value;
     }
 
+    public function toString(): string
+    {
+        return $this->value;
+    }
+
     private function isValid(string $email): bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;

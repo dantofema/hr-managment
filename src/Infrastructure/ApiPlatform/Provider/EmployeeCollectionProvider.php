@@ -6,15 +6,15 @@ namespace App\Infrastructure\ApiPlatform\Provider;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use ApiPlatform\State\Pagination\Pagination;
+use ApiPlatform\State\Pagination\PaginatorInterface;
+use ApiPlatform\State\Pagination\ArrayPaginator;
 use App\Infrastructure\ApiResource\Employee;
 use App\Domain\Employee\EmployeeRepository;
 
 final readonly class EmployeeCollectionProvider implements ProviderInterface
 {
     public function __construct(
-        private EmployeeRepository $employeeRepository,
-        private Pagination $pagination
+        private EmployeeRepository $employeeRepository
     ) {
     }
 
@@ -33,8 +33,8 @@ final readonly class EmployeeCollectionProvider implements ProviderInterface
             $apiEmployee->salaryAmount = $employee->getSalary()->amount();
             $apiEmployee->salaryCurrency = $employee->getSalary()->currency();
             $apiEmployee->hiredAt = $employee->getHiredAt()->format('Y-m-d');
-            $apiEmployee->createdAt = $employee->getCreatedAt();
-            $apiEmployee->updatedAt = $employee->getUpdatedAt();
+            $apiEmployee->createdAt = $employee->getCreatedAt()->format('Y-m-d H:i:s');
+            $apiEmployee->updatedAt = $employee->getUpdatedAt()?->format('Y-m-d H:i:s');
             $apiEmployee->fullName = $employee->getFullName()->fullName();
             $apiEmployee->yearsOfService = $employee->getYearsOfService();
             $apiEmployee->annualVacationDays = $employee->calculateAnnualVacationDays();
@@ -43,14 +43,15 @@ final readonly class EmployeeCollectionProvider implements ProviderInterface
             $apiEmployees[] = $apiEmployee;
         }
         
-        // Apply pagination manually since we're using a custom provider
-        $page = $context['filters']['page'] ?? 1;
+        // Get pagination parameters
+        $page = (int) ($context['filters']['page'] ?? 1);
         $itemsPerPage = $operation->getPaginationItemsPerPage() ?? 20;
         $offset = ($page - 1) * $itemsPerPage;
         
+        // Create paginated result
         $totalItems = count($apiEmployees);
         $paginatedItems = array_slice($apiEmployees, $offset, $itemsPerPage);
         
-        return $this->pagination->paginate($paginatedItems, $totalItems, $page, $itemsPerPage);
+        return new ArrayPaginator($paginatedItems, $offset, $itemsPerPage, $totalItems);
     }
 }

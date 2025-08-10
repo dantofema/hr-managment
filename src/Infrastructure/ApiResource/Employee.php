@@ -29,6 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(
             denormalizationContext: ['groups' => ['employee:write']],
             normalizationContext: ['groups' => ['employee:read']],
+            processor: \App\Infrastructure\ApiPlatform\Processor\EmployeeProcessor::class,
         ),
         new Put(
             uriTemplate: '/employees/{id}',

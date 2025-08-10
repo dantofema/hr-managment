@@ -35,7 +35,7 @@ final class EmployeeRepository extends ServiceEntityRepository implements Domain
 
     public function findByEmail(Email $email): ?DomainEmployee
     {
-        $entity = $this->findOneBy(['email' => $email->toString()]);
+        $entity = $this->findOneBy(['email' => $email->value()]);
         
         return $entity ? $entity->toDomain() : null;
     }

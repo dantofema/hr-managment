@@ -30,8 +30,8 @@ class EmployeeApiTest extends ApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        self::bootKernel();
-        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $kernel = self::bootKernel();
+        $this->entityManager = $kernel->getContainer()->get('doctrine.orm.entity_manager');
         
         // Clean up any existing test data
         $this->cleanupEmployees();
@@ -272,12 +272,16 @@ class EmployeeApiTest extends ApiTestCase
         ];
 
         // Act
-        static::createClient()->request('POST', '/api/employees', [
+        $response = static::createClient()->request('POST', '/api/employees', [
             'json' => $duplicateData
         ]);
 
         // Assert
         $this->assertResponseStatusCodeSame(400);
+        
+        // Check if the error message contains duplicate email validation
+        $responseData = $response->toArray(false);
+        $this->assertStringContainsString('email already exists', $responseData['error'] ?? $responseData['detail'] ?? '');
     }
 
     /**
@@ -327,7 +331,7 @@ class EmployeeApiTest extends ApiTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(422);
     }
 
     /**
