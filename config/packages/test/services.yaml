@@ -1,0 +1,4 @@
+services:
+    # Make EntityManager public for tests
+    Doctrine\ORM\EntityManagerInterface:
+        public: true

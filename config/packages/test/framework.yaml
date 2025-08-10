@@ -1,0 +1,6 @@
+# Test environment specific framework configuration
+# This ensures test.service_container is always available in test environment
+framework:
+    test: true
+    session:
+        storage_factory_id: session.storage.factory.mock_file
