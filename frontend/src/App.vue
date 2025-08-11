@@ -127,6 +127,9 @@ export default {
 
     // URL-based routing helper functions
     const getViewFromPath = (path) => {
+      // Let API routes pass through to backend
+      if (path.startsWith('/api')) return null
+      
       if (path === '/' || path === '/home') return 'home'
       if (path === '/login') return 'login'
       if (path === '/employees') return 'employees'
@@ -153,7 +156,10 @@ export default {
     const initializeFromUrl = () => {
       const path = window.location.pathname
       const viewFromUrl = getViewFromPath(path)
-      currentView.value = viewFromUrl
+      // Only update currentView if it's not an API route
+      if (viewFromUrl !== null) {
+        currentView.value = viewFromUrl
+      }
     }
 
     const handleNavigation = (view) => {
@@ -178,7 +184,10 @@ export default {
     const handlePopState = () => {
       const path = window.location.pathname
       const viewFromUrl = getViewFromPath(path)
-      currentView.value = viewFromUrl
+      // Only update currentView if it's not an API route
+      if (viewFromUrl !== null) {
+        currentView.value = viewFromUrl
+      }
     }
 
     // Watch for authentication changes

@@ -184,7 +184,7 @@ const extractPageFromUrl = (url) => {
  * @returns {number} Total pages
  */
 const calculateTotalPages = (response) => {
-  const totalItems = response['hydra:totalItems'] || 0;
+  const totalItems = response['totalItems'] || 0;
   const itemsPerPage = 30; // API Platform default
   return Math.ceil(totalItems / itemsPerPage);
 };
@@ -204,13 +204,13 @@ const fetchEmployees = async (page = 1, filters = {}) => {
     const data = response.data;
     
     // Transform API Platform response
-    const employees = (data['hydra:member'] || []).map(transformEmployee);
+    const employees = (data['member'] || []).map(transformEmployee);
     
     return {
       data: employees,
       pagination: {
-        currentPage: extractPageFromUrl(data['hydra:view']?.['@id']),
-        totalItems: data['hydra:totalItems'] || 0,
+        currentPage: extractPageFromUrl(data['view']?.['@id']),
+        totalItems: data['totalItems'] || 0,
         totalPages: calculateTotalPages(data)
       }
     };

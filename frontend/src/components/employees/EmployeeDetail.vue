@@ -1,5 +1,6 @@
 <template>
-  <div class="employee-detail" role="main" aria-labelledby="employee-name">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="employee-detail" role="main" aria-labelledby="employee-name">
     <!-- Loading State -->
     <div v-if="!employee" class="flex justify-center items-center py-12" role="status" aria-live="polite">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" aria-hidden="true"></div>
@@ -187,6 +188,7 @@
         </button>
       </div>
     </div>
+  </div>
   </div>
 </template>
 

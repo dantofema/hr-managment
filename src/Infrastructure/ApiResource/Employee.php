@@ -11,16 +11,12 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Patch;
-use App\Application\DTO\Employee\EmployeeResponse;
+use App\Application\UseCase\Employee\GetEmployee\GetEmployeeResponse;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
-        new GetCollection(
-            normalizationContext: ['groups' => ['employee:read']],
-            provider: \App\Infrastructure\ApiPlatform\Provider\EmployeeCollectionProvider::class,
-        ),
         new Get(
             uriTemplate: '/employees/{id}',
             normalizationContext: ['groups' => ['employee:read', 'employee:item']],
@@ -107,7 +103,7 @@ class Employee
     #[Groups(['employee:read', 'employee:item'])]
     public bool $vacationEligible = false;
 
-    public static function fromApplicationDTO(EmployeeResponse $dto): self
+    public static function fromApplicationDTO(GetEmployeeResponse $dto): self
     {
         $resource = new self();
         $resource->id = $dto->id;

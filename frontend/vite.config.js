@@ -19,6 +19,13 @@ export default defineConfig({
     },
     watch: {
       usePolling: true // Para Docker en algunos sistemas
+    },
+    proxy: {
+      '/api': {
+        target: 'http://app:8000',
+        changeOrigin: true,
+        secure: false
+      }
     }
   },
   resolve: {

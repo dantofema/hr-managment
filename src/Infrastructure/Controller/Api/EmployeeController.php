@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Api;
 use App\Application\Service\EmployeeApplicationService;
 use App\Application\UseCase\Employee\CreateEmployee\CreateEmployeeCommand;
 use App\Application\UseCase\Employee\GetEmployee\GetEmployeeQuery;
+use App\Application\UseCase\Employee\ListEmployees\ListEmployeesQuery;
 use App\Infrastructure\ApiResource\Employee as EmployeeApiResource;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +25,47 @@ final class EmployeeController extends AbstractController
         private readonly SerializerInterface $serializer,
         private readonly ValidatorInterface $validator
     ) {}
+
+    #[Route('', methods: ['GET'])]
+    public function list(Request $request): JsonResponse
+    {
+        try {
+            $page = (int) $request->query->get('page', 1);
+            $limit = (int) $request->query->get('limit', 10);
+            
+            $query = new ListEmployeesQuery($page, $limit);
+            $response = $this->employeeService->listEmployees($query);
+            
+            // Manually serialize employee data to preserve structure
+            $serializedEmployees = [];
+            foreach ($response->employees as $employeeResponse) {
+                $apiResource = EmployeeApiResource::fromApplicationDTO($employeeResponse);
+                $serializedEmployees[] = json_decode(
+                    $this->serializer->serialize($apiResource, 'json', ['groups' => ['employee:read']]),
+                    true
+                );
+            }
+            
+            $result = [
+                '@context' => '/api/contexts/Employee',
+                '@id' => '/api/employees',
+                '@type' => 'Collection',
+                'totalItems' => $response->total,
+                'member' => $serializedEmployees,
+                'view' => [
+                    '@id' => "/api/employees?page={$response->page}",
+                    '@type' => 'PartialCollectionView',
+                    'first' => '/api/employees?page=1',
+                    'last' => "/api/employees?page={$response->totalPages}",
+                    'next' => $response->page < $response->totalPages ? "/api/employees?page=" . ($response->page + 1) : null
+                ]
+            ];
+            
+            return new JsonResponse($result, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 
     #[Route('', methods: ['POST'])]
     public function create(Request $request): JsonResponse
