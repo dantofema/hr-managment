@@ -33,6 +33,11 @@
         </div>
       </div>
 
+      <!-- Modal Test View -->
+      <div v-else-if="currentView === 'modal-test'">
+        <BaseModalTest />
+      </div>
+
       <!-- Unauthorized Access -->
       <div v-else-if="!isAuthenticated && ['employees', 'profile', 'settings'].includes(currentView)">
         <div class="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow-md">
@@ -93,7 +98,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import Home from './components/Home.vue'
 import EmployeesList from './components/EmployeesList.vue'
@@ -101,6 +106,7 @@ import LoginView from './views/LoginView.vue'
 import UserProfile from './components/auth/UserProfile.vue'
 import AppNavigation from './components/layout/AppNavigation.vue'
 import AppFooter from './components/layout/AppFooter.vue'
+import BaseModalTest from './components/BaseModalTest.vue'
 
 export default {
   name: 'App',
@@ -110,7 +116,8 @@ export default {
     LoginView,
     UserProfile,
     AppNavigation,
-    AppFooter
+    AppFooter,
+    BaseModalTest
   },
   setup() {
     const { isAuthenticated, isLoading } = useAuth()
@@ -118,19 +125,60 @@ export default {
     // Current view state - simple routing alternative
     const currentView = ref('home')
 
+    // URL-based routing helper functions
+    const getViewFromPath = (path) => {
+      if (path === '/' || path === '/home') return 'home'
+      if (path === '/login') return 'login'
+      if (path === '/employees') return 'employees'
+      if (path === '/profile') return 'profile'
+      if (path === '/settings') return 'settings'
+      return 'home' // default fallback
+    }
+
+    const updateUrlForView = (view) => {
+      const pathMap = {
+        'home': '/',
+        'login': '/login',
+        'employees': '/employees',
+        'profile': '/profile',
+        'settings': '/settings'
+      }
+      const newPath = pathMap[view] || '/'
+      if (window.location.pathname !== newPath) {
+        window.history.pushState({}, '', newPath)
+      }
+    }
+
+    // Initialize view based on current URL
+    const initializeFromUrl = () => {
+      const path = window.location.pathname
+      const viewFromUrl = getViewFromPath(path)
+      currentView.value = viewFromUrl
+    }
+
     const handleNavigation = (view) => {
       // Validate navigation based on authentication state
       if (!isAuthenticated.value && ['employees', 'profile', 'settings'].includes(view)) {
         currentView.value = 'login'
+        updateUrlForView('login')
         return
       }
       
       currentView.value = view
+      updateUrlForView(view)
     }
 
     const handleLoginSuccess = () => {
       // Redirect to employees page after successful login
       currentView.value = 'employees'
+      updateUrlForView('employees')
+    }
+
+    // Handle browser back/forward navigation
+    const handlePopState = () => {
+      const path = window.location.pathname
+      const viewFromUrl = getViewFromPath(path)
+      currentView.value = viewFromUrl
     }
 
     // Watch for authentication changes
@@ -138,7 +186,14 @@ export default {
       if (!newValue && ['employees', 'profile', 'settings'].includes(currentView.value)) {
         // Redirect to home if user logs out while on protected page
         currentView.value = 'home'
+        updateUrlForView('home')
       }
+    })
+
+    // Initialize routing on component mount
+    onMounted(() => {
+      initializeFromUrl()
+      window.addEventListener('popstate', handlePopState)
     })
 
     return {

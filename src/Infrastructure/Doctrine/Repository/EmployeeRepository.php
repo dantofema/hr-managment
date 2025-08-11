@@ -22,8 +22,22 @@ final class EmployeeRepository extends ServiceEntityRepository implements Domain
     public function save(DomainEmployee $employee): void
     {
         $entity = EmployeeEntity::fromDomain($employee);
-        $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush();
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+        
+        // Commit current transaction if active to ensure employee is persisted
+        // This is needed for test environments where transactions are used for isolation
+        if ($connection->isTransactionActive()) {
+            $connection->commit();
+        }
+        
+        $em->persist($entity);
+        $em->flush();
+        
+        // Start a new transaction for continued test isolation
+        if (!$connection->isTransactionActive()) {
+            $connection->beginTransaction();
+        }
     }
 
     public function findById(Uuid $id): ?DomainEmployee

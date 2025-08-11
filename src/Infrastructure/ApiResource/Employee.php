@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             denormalizationContext: ['groups' => ['employee:write']],
-            normalizationContext: ['groups' => ['employee:read']],
+            normalizationContext: ['groups' => ['employee:create']],
             processor: \App\Infrastructure\ApiPlatform\Processor\EmployeeProcessor::class,
         ),
         new Put(
@@ -50,52 +50,52 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class Employee
 {
-    #[Groups(['employee:read'])]
+    #[Groups(['employee:read', 'employee:create'])]
     public string $id = '';
 
-    #[Groups(['employee:read', 'employee:write'])]
+    #[Groups(['employee:read', 'employee:write', 'employee:create'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 100)]
     public string $firstName = '';
 
-    #[Groups(['employee:read', 'employee:write'])]
+    #[Groups(['employee:read', 'employee:write', 'employee:create'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 100)]
     public string $lastName = '';
 
-    #[Groups(['employee:read', 'employee:write'])]
+    #[Groups(['employee:read', 'employee:write', 'employee:create'])]
     #[Assert\NotBlank]
     #[Assert\Email]
     public string $email = '';
 
-    #[Groups(['employee:read', 'employee:write'])]
+    #[Groups(['employee:read', 'employee:write', 'employee:create'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 100)]
     public string $position = '';
 
-    #[Groups(['employee:read', 'employee:write'])]
+    #[Groups(['employee:read', 'employee:write', 'employee:create'])]
     #[Assert\NotBlank]
     #[Assert\Positive]
     public float $salaryAmount = 0.0;
 
-    #[Groups(['employee:read', 'employee:write'])]
+    #[Groups(['employee:read', 'employee:write', 'employee:create'])]
     #[Assert\NotBlank]
     #[Assert\Length(exactly: 3)]
     public string $salaryCurrency = '';
 
-    #[Groups(['employee:read', 'employee:write'])]
+    #[Groups(['employee:read', 'employee:write', 'employee:create'])]
     #[Assert\NotBlank]
     #[Assert\Date(message: 'The hire date must be a valid date in YYYY-MM-DD format.')]
     public string $hiredAt = '';
 
-    #[Groups(['employee:read'])]
+    #[Groups(['employee:read', 'employee:create'])]
     public ?\DateTimeImmutable $createdAt = null;
 
-    #[Groups(['employee:read'])]
+    #[Groups(['employee:read', 'employee:create'])]
     public ?\DateTimeImmutable $updatedAt = null;
 
     // Computed properties - values set from Application layer
-    #[Groups(['employee:read', 'employee:item'])]
+    #[Groups(['employee:read', 'employee:item', 'employee:create'])]
     public string $fullName = '';
 
     #[Groups(['employee:read', 'employee:item'])]

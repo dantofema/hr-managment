@@ -55,4 +55,30 @@ class AuthController extends AbstractController
             ]
         ]);
     }
+
+    #[Route('/api/auth/login', name: 'api_auth_login', methods: ['POST'])]
+    public function authLogin(#[CurrentUser] ?User $user): JsonResponse
+    {
+        if (null === $user) {
+            return $this->json([
+                'message' => 'Missing credentials',
+            ], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        // Update last login time
+        $user->recordLogin();
+        
+        // Persist the changes to database
+        $this->userRepository->save($user);
+
+        return $this->json([
+            'user' => [
+                'id' => $user->getId()->toString(),
+                'email' => (string) $user->getEmail(),
+                'name' => $user->getName(),
+                'roles' => $user->getRoles(),
+            ],
+            'message' => 'Login successful',
+        ]);
+    }
 }

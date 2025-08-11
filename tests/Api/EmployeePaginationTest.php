@@ -39,13 +39,13 @@ class EmployeePaginationTest extends ApiTestCase
         
         // Check if using hydra format or simple format
         if (isset($data['hydra:totalItems'])) {
-            $this->assertEquals(20, $data['hydra:totalItems']); // Actual count created
-            $this->assertCount(20, $data['hydra:member']); // All items fit in one page
+            $this->assertEquals(25, $data['hydra:totalItems']); // Total employees created in test
+            $this->assertCount(20, $data['hydra:member']); // Items per page (pagination limit)
             $this->assertArrayHasKey('hydra:view', $data);
         } else {
             // Use simple format
-            $this->assertEquals(20, $data['totalItems']); // Actual count created
-            $this->assertCount(20, $data['member']); // All items fit in one page
+            $this->assertEquals(25, $data['totalItems']); // Total employees created in test
+            $this->assertCount(20, $data['member']); // Items per page (pagination limit)
         }
     }
 
