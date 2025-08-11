@@ -231,9 +231,17 @@ class EmployeeApiTest extends ApiTestCase
      */
     public function testGetEmployeesCollection(): void
     {
+        // Debug: Check employee count before creating test employees
+        $countBefore = $this->connection->fetchOne("SELECT COUNT(*) FROM employees");
+        error_log("Employee count before creating test employees: " . $countBefore);
+        
         // Arrange
         $this->createTestEmployee('emp1@example.com', 'Employee', 'One', 'Developer', 70000.00, 'USD');
         $this->createTestEmployee('emp2@example.com', 'Employee', 'Two', 'Designer', 65000.00, 'USD');
+
+        // Debug: Check employee count after creating test employees
+        $countAfter = $this->connection->fetchOne("SELECT COUNT(*) FROM employees");
+        error_log("Employee count after creating test employees: " . $countAfter);
 
         // Act
         $response = $this->getJsonAuthenticated('/api/employees');
@@ -248,6 +256,10 @@ class EmployeeApiTest extends ApiTestCase
         );
         
         $data = json_decode($response->getContent(), true);
+        error_log("Test received response: " . $response->getContent());
+        error_log("Test parsed data totalItems: " . ($data['totalItems'] ?? 'NOT_SET'));
+        error_log("Test parsed data member count: " . count($data['member'] ?? []));
+        
         $this->assertArrayHasKey('member', $data);
         $this->assertArrayHasKey('totalItems', $data);
         $this->assertEquals(2, $data['totalItems']);
@@ -286,8 +298,11 @@ class EmployeeApiTest extends ApiTestCase
         $this->assertApiResponse($response, 200);
         $data = json_decode($response->getContent(), true);
         
-        $this->assertEquals(20, $data['totalItems']); // Actual count created
-        $this->assertCount(20, $data['member']); // All items fit in one page
+        error_log("Pagination test - totalItems: " . ($data['totalItems'] ?? 'NOT_SET'));
+        error_log("Pagination test - member count: " . count($data['member'] ?? []));
+        
+        $this->assertEquals(25, $data['totalItems']); // Total count created
+        $this->assertCount(20, $data['member']); // First page items (pagination limit)
     }
 
     /**

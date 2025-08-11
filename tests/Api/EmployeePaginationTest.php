@@ -13,6 +13,9 @@ class EmployeePaginationTest extends ApiTestCase
      */
     public function testEmployeesCollectionPagination(): void
     {
+        // Arrange - Create authenticated user first
+        $user = $this->createAuthenticatedUser('pagination_test@example.com');
+        
         // Arrange - Create more employees than the pagination limit
         $timestamp = time();
         for ($i = 1; $i <= 25; $i++) {
@@ -22,12 +25,13 @@ class EmployeePaginationTest extends ApiTestCase
                 "Number{$i}",
                 "Position {$i}",
                 50000.00 + ($i * 1000),
-                'USD'
+                'USD',
+                $user
             );
         }
 
         // Act
-        $response = $this->getJsonAuthenticated('/api/employees');
+        $response = $this->getJsonAuthenticated('/api/employees', $user);
 
         // Assert
         $this->assertApiResponse($response, 200);
@@ -54,7 +58,8 @@ class EmployeePaginationTest extends ApiTestCase
         string $lastName,
         string $position,
         float $salaryAmount,
-        string $salaryCurrency
+        string $salaryCurrency,
+        $user = null
     ): void {
         $employeeData = [
             'firstName' => $firstName,
@@ -66,6 +71,6 @@ class EmployeePaginationTest extends ApiTestCase
             'hiredAt' => '2024-01-15'
         ];
 
-        $this->postJsonAuthenticated('/api/employees', $employeeData);
+        $this->postJsonAuthenticated('/api/employees', $employeeData, $user);
     }
 }

@@ -27,6 +27,12 @@ abstract class DatabaseTestCase extends WebTestCase
         
         // Start transaction for test isolation
         $this->connection->beginTransaction();
+        
+        // Clean database after transaction starts to ensure isolation
+        $this->cleanDatabase();
+        
+        // Clear EntityManager cache to ensure fresh data is loaded
+        $this->entityManager->clear();
     }
 
     protected function tearDown(): void
@@ -64,5 +70,36 @@ abstract class DatabaseTestCase extends WebTestCase
     protected function getRepository(string $entityClass): object
     {
         return $this->entityManager->getRepository($entityClass);
+    }
+
+    protected function cleanDatabase(): void
+    {
+        // List of tables to truncate (in order to avoid foreign key constraints)
+        $tablesToTruncate = [
+            'payrolls',
+            'vacations',
+            'employees',
+            'users'
+        ];
+        
+        foreach ($tablesToTruncate as $table) {
+            try {
+                // Check count before truncate
+                $countBefore = $this->connection->fetchOne("SELECT COUNT(*) FROM {$table}");
+                
+                // Use CASCADE to handle foreign key constraints in PostgreSQL
+                $this->connection->executeStatement("TRUNCATE TABLE {$table} RESTART IDENTITY CASCADE");
+                
+                // Check count after truncate
+                $countAfter = $this->connection->fetchOne("SELECT COUNT(*) FROM {$table}");
+                
+                // Debug output
+                error_log("Table {$table}: Before={$countBefore}, After={$countAfter}");
+            } catch (\Exception $e) {
+                // Table might not exist or might be empty, continue
+                error_log("Error truncating table {$table}: " . $e->getMessage());
+                continue;
+            }
+        }
     }
 }

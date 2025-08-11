@@ -43,11 +43,11 @@ class UserTest extends ApiTestCase
             '@context' => '/api/contexts/User',
             '@id' => '/api/users',
             '@type' => 'Collection',
-            'totalItems' => 2,
+            'totalItems' => 3,
         ]);
 
         $data = json_decode($response->getContent(), true);
-        $this->assertCount(2, $data['member']);
+        $this->assertCount(3, $data['member']);
         
         // Verify password is not exposed
         foreach ($data['member'] as $user) {

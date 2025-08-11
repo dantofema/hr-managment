@@ -25,7 +25,7 @@ abstract class ApiTestCase extends DatabaseTestCase
         $this->client = static::getClient() ?? static::createClient();
     }
 
-    protected function createAuthenticatedUser(string $email = 'test@example.com', array $roles = ['ROLE_USER']): User
+    protected function createAuthenticatedUser(string $email = 'auth-user@example.com', array $roles = ['ROLE_USER']): User
     {
         $userRepository = $this->container->get(UserRepository::class);
         
@@ -35,8 +35,16 @@ abstract class ApiTestCase extends DatabaseTestCase
             $roles
         );
         
+        // Commit the user creation outside of transaction to ensure it's available for JWT validation
+        if ($this->connection->isTransactionActive()) {
+            $this->connection->commit();
+        }
+        
         $userRepository->save($user);
         $this->testUser = $user;
+        
+        // Start a new transaction for test data isolation
+        $this->connection->beginTransaction();
         
         return $user;
     }
@@ -69,7 +77,7 @@ abstract class ApiTestCase extends DatabaseTestCase
     ): Response {
         $defaultHeaders = [
             'CONTENT_TYPE' => 'application/json',
-            'HTTP_ACCEPT' => 'application/json',
+            'HTTP_ACCEPT' => 'application/ld+json',
         ];
 
         $headers = array_merge($defaultHeaders, $headers);

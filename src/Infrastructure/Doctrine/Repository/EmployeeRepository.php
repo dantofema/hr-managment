@@ -44,6 +44,9 @@ final class EmployeeRepository extends ServiceEntityRepository implements Domain
     {
         $entities = $this->findBy([]);
         
+        // Debug logging
+        error_log("EmployeeRepository::findAll() found " . count($entities) . " entities");
+        
         return array_map(
             fn(EmployeeEntity $entity) => $entity->toDomain(),
             $entities

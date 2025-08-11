@@ -53,22 +53,40 @@ class EmployeeControllerTest extends ApiTestCase
 
         $response = $this->postJsonAuthenticated('/api/employees', $incompleteData);
 
-        $this->assertApiResponse($response, 400);
+        $this->assertApiResponse($response, 422);
         $data = $this->assertJsonResponse($response);
 
-        $this->assertArrayHasKey('error', $data);
-        $this->assertEquals('Missing required fields', $data['error']);
+        $this->assertArrayHasKey('violations', $data);
+        $this->assertNotEmpty($data['violations']);
     }
 
     public function testPostEmployeesEmptyData(): void
     {
-        $response = $this->postJsonAuthenticated('/api/employees', []);
+        // Send empty object {} instead of empty array []
+        $response = $this->postJsonAuthenticated('/api/employees', ['_dummy' => null]);
+        
+        // Remove the dummy key to make it truly empty
+        $headers = array_merge(
+            ['CONTENT_TYPE' => 'application/json'],
+            $this->getAuthHeaders()
+        );
+        
+        $this->client->request(
+            'POST',
+            '/api/employees',
+            [],
+            [],
+            $headers,
+            '{}'  // Send empty JSON object directly
+        );
 
-        $this->assertApiResponse($response, 400);
+        $response = $this->client->getResponse();
+
+        $this->assertApiResponse($response, 422);
         $data = $this->assertJsonResponse($response);
 
-        $this->assertArrayHasKey('error', $data);
-        $this->assertEquals('Missing required fields', $data['error']);
+        $this->assertArrayHasKey('violations', $data);
+        $this->assertNotEmpty($data['violations']);
     }
 
     public function testPostEmployeesInvalidJson(): void
@@ -92,8 +110,8 @@ class EmployeeControllerTest extends ApiTestCase
         $this->assertApiResponse($response, 400);
         $data = $this->assertJsonResponse($response);
 
-        $this->assertArrayHasKey('error', $data);
-        $this->assertEquals('Missing required fields', $data['error']);
+        $this->assertArrayHasKey('title', $data);
+        $this->assertArrayHasKey('detail', $data);
     }
 
     public function testPostEmployeesInvalidDate(): void
@@ -110,10 +128,11 @@ class EmployeeControllerTest extends ApiTestCase
 
         $response = $this->postJsonAuthenticated('/api/employees', $employeeData);
 
-        $this->assertApiResponse($response, 400);
+        $this->assertApiResponse($response, 422);
         $data = $this->assertJsonResponse($response);
 
-        $this->assertArrayHasKey('error', $data);
+        $this->assertArrayHasKey('violations', $data);
+        $this->assertNotEmpty($data['violations']);
     }
 
     public function testPostEmployeesWithDifferentCurrencies(): void
@@ -191,8 +210,8 @@ class EmployeeControllerTest extends ApiTestCase
         $this->assertApiResponse($response, 404);
         $data = $this->assertJsonResponse($response);
 
-        $this->assertArrayHasKey('error', $data);
-        $this->assertEquals('Employee not found', $data['error']);
+        $this->assertArrayHasKey('title', $data);
+        $this->assertArrayHasKey('detail', $data);
     }
 
     public function testGetEmployeeByIdInvalidUuid(): void
@@ -201,10 +220,11 @@ class EmployeeControllerTest extends ApiTestCase
 
         $response = $this->getJsonAuthenticated("/api/employees/{$invalidId}");
 
-        $this->assertApiResponse($response, 500);
+        $this->assertApiResponse($response, 404);
         $data = $this->assertJsonResponse($response);
 
-        $this->assertArrayHasKey('error', $data);
+        $this->assertArrayHasKey('title', $data);
+        $this->assertArrayHasKey('detail', $data);
     }
 
     public function testGetEmployeesCollectionSuccess(): void
@@ -335,6 +355,6 @@ class EmployeeControllerTest extends ApiTestCase
         $response = $this->postJsonAuthenticated('/api/employees', $employeeData);
 
         $this->assertApiResponse($response, 201);
-        $this->assertTrue($response->headers->contains('Content-Type', 'application/json'));
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
     }
 }

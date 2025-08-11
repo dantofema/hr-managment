@@ -27,6 +27,13 @@ api_platform:
     json: [ 'application/json' ]
     html: [ 'text/html' ]
 
+  # Configuración de paginación
+  collection:
+    pagination:
+      enabled: true
+      page_parameter_name: page
+      items_per_page_parameter_name: itemsPerPage
+
   # Configuración de documentación
   docs_formats:
     jsonld: [ 'application/ld+json' ]
