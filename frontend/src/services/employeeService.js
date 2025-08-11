@@ -6,24 +6,19 @@
  * @version 1.0.0
  */
 
-// Base configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-const EMPLOYEES_ENDPOINT = '/employees';
+import httpClient from '@/utils/httpClient';
 
-// Default headers for API requests
-const defaultHeaders = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-};
+// Base configuration
+const EMPLOYEES_ENDPOINT = '/employees';
 
 /**
  * Build URL with endpoint and optional parameters
  * @param {string} endpoint - API endpoint
  * @param {Object} params - Query parameters
- * @returns {string} Complete URL
+ * @returns {string} Complete URL with query parameters
  */
 const buildUrl = (endpoint, params = {}) => {
-  const url = new URL(`${API_BASE_URL}${endpoint}`);
+  const url = new URL(endpoint, 'http://localhost'); // Temporary base for URL construction
   
   Object.keys(params).forEach(key => {
     if (params[key] !== undefined && params[key] !== null) {
@@ -31,19 +26,19 @@ const buildUrl = (endpoint, params = {}) => {
     }
   });
   
-  return url.toString();
+  return `${endpoint}${url.search}`; // Return endpoint with query string
 };
 
 /**
  * Handle and standardize API errors
- * @param {Error} error - Original error object
+ * @param {Error} error - Original error object (axios error)
  * @returns {Object} Standardized error object
  */
 const handleApiError = (error) => {
   console.error('API Error:', error);
   
   // Network errors
-  if (!error.response && error.message.includes('fetch')) {
+  if (!error.response) {
     return {
       type: 'NETWORK_ERROR',
       message: 'Error de conexión. Verifique su conexión a internet.',
@@ -52,9 +47,17 @@ const handleApiError = (error) => {
     };
   }
   
-  // HTTP errors
-  if (error.status) {
-    switch (error.status) {
+  // HTTP errors from axios response
+  const status = error.response?.status;
+  if (status) {
+    switch (status) {
+      case 401:
+        return {
+          type: 'UNAUTHORIZED',
+          message: 'No autorizado. Por favor, inicie sesión nuevamente.',
+          details: { originalError: error.message },
+          status: 401
+        };
       case 404:
         return {
           type: 'NOT_FOUND',
@@ -66,7 +69,7 @@ const handleApiError = (error) => {
         return {
           type: 'VALIDATION_ERROR',
           message: 'Los datos proporcionados no son válidos.',
-          details: { originalError: error.message, validationErrors: error.details },
+          details: { originalError: error.message, validationErrors: error.response?.data },
           status: 422
         };
       case 500:
@@ -79,9 +82,9 @@ const handleApiError = (error) => {
       default:
         return {
           type: 'SERVER_ERROR',
-          message: `Error del servidor: ${error.status}`,
+          message: `Error del servidor: ${status}`,
           details: { originalError: error.message },
-          status: error.status
+          status: status
         };
     }
   }
@@ -197,21 +200,8 @@ const fetchEmployees = async (page = 1, filters = {}) => {
     const params = { page, ...filters };
     const url = buildUrl(EMPLOYEES_ENDPOINT, params);
     
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: defaultHeaders
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw {
-        status: response.status,
-        message: response.statusText,
-        details: errorData
-      };
-    }
-    
-    const data = await response.json();
+    const response = await httpClient.get(url);
+    const data = response.data;
     
     // Transform API Platform response
     const employees = (data['hydra:member'] || []).map(transformEmployee);
@@ -241,24 +231,10 @@ const getEmployee = async (id) => {
       throw new Error('Employee ID is required');
     }
     
-    const url = buildUrl(`${EMPLOYEES_ENDPOINT}/${id}`);
+    const url = `${EMPLOYEES_ENDPOINT}/${id}`;
+    const response = await httpClient.get(url);
     
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: defaultHeaders
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw {
-        status: response.status,
-        message: response.statusText,
-        details: errorData
-      };
-    }
-    
-    const data = await response.json();
-    return transformEmployee(data);
+    return transformEmployee(response.data);
     
   } catch (error) {
     throw handleApiError(error);
@@ -276,31 +252,14 @@ const createEmployee = async (employeeData) => {
     const validation = validateEmployeeData(employeeData);
     if (!validation.isValid) {
       throw {
-        status: 422,
+        response: { status: 422 },
         message: 'Validation failed',
         details: { validationErrors: validation.errors }
       };
     }
     
-    const url = buildUrl(EMPLOYEES_ENDPOINT);
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: defaultHeaders,
-      body: JSON.stringify(employeeData)
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw {
-        status: response.status,
-        message: response.statusText,
-        details: errorData
-      };
-    }
-    
-    const data = await response.json();
-    return transformEmployee(data);
+    const response = await httpClient.post(EMPLOYEES_ENDPOINT, employeeData);
+    return transformEmployee(response.data);
     
   } catch (error) {
     throw handleApiError(error);
@@ -323,31 +282,16 @@ const updateEmployee = async (id, employeeData) => {
     const validation = validateEmployeeData(employeeData);
     if (!validation.isValid) {
       throw {
-        status: 422,
+        response: { status: 422 },
         message: 'Validation failed',
         details: { validationErrors: validation.errors }
       };
     }
     
-    const url = buildUrl(`${EMPLOYEES_ENDPOINT}/${id}`);
+    const url = `${EMPLOYEES_ENDPOINT}/${id}`;
+    const response = await httpClient.put(url, employeeData);
     
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: defaultHeaders,
-      body: JSON.stringify(employeeData)
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw {
-        status: response.status,
-        message: response.statusText,
-        details: errorData
-      };
-    }
-    
-    const data = await response.json();
-    return transformEmployee(data);
+    return transformEmployee(response.data);
     
   } catch (error) {
     throw handleApiError(error);
@@ -365,21 +309,8 @@ const deleteEmployee = async (id) => {
       throw new Error('Employee ID is required');
     }
     
-    const url = buildUrl(`${EMPLOYEES_ENDPOINT}/${id}`);
-    
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: defaultHeaders
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw {
-        status: response.status,
-        message: response.statusText,
-        details: errorData
-      };
-    }
+    const url = `${EMPLOYEES_ENDPOINT}/${id}`;
+    await httpClient.delete(url);
     
     return {
       success: true,

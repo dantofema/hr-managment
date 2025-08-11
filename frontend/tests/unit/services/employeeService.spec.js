@@ -2,9 +2,21 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 import employeeService from '@/services/employeeService.js'
 import { mockEmployee, mockEmployees, mockPaginatedResponse, createValidEmployeeFormData } from '../../fixtures/employees.js'
 
+// Mock httpClient
+vi.mock('@/utils/httpClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn()
+  }
+}))
+
+import httpClient from '@/utils/httpClient'
+
 describe('employeeService', () => {
   beforeEach(() => {
-    global.fetch = vi.fn()
+    vi.clearAllMocks()
     vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 
@@ -14,22 +26,14 @@ describe('employeeService', () => {
 
   describe('fetchEmployees', () => {
     test('should fetch employees with pagination', async () => {
-      global.fetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockPaginatedResponse)
+      httpClient.get.mockResolvedValue({
+        data: mockPaginatedResponse
       })
 
       const result = await employeeService.fetchEmployees(1)
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/employees?page=1'),
-        expect.objectContaining({
-          method: 'GET',
-          headers: expect.objectContaining({
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          })
-        })
+      expect(httpClient.get).toHaveBeenCalledWith(
+        expect.stringContaining('/employees?page=1')
       )
 
       expect(result.data).toHaveLength(mockEmployees.length)
@@ -39,26 +43,23 @@ describe('employeeService', () => {
     })
 
     test('should fetch employees with filters', async () => {
-      global.fetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockPaginatedResponse)
+      httpClient.get.mockResolvedValue({
+        data: mockPaginatedResponse
       })
 
       const filters = { search: 'John', position: 'Developer' }
       await employeeService.fetchEmployees(1, filters)
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('search=John'),
-        expect.any(Object)
+      expect(httpClient.get).toHaveBeenCalledWith(
+        expect.stringContaining('search=John')
       )
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('position=Developer'),
-        expect.any(Object)
+      expect(httpClient.get).toHaveBeenCalledWith(
+        expect.stringContaining('position=Developer')
       )
     })
 
     test('should handle network errors', async () => {
-      global.fetch.mockRejectedValue(new Error('fetch failed'))
+      httpClient.get.mockRejectedValue(new Error('Network Error'))
 
       await expect(employeeService.fetchEmployees()).rejects.toMatchObject({
         type: 'NETWORK_ERROR',
@@ -67,12 +68,14 @@ describe('employeeService', () => {
     })
 
     test('should handle server errors', async () => {
-      global.fetch.mockResolvedValue({
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-        json: () => Promise.resolve({})
-      })
+      const axiosError = {
+        response: {
+          status: 500,
+          data: {}
+        },
+        message: 'Request failed with status code 500'
+      }
+      httpClient.get.mockRejectedValue(axiosError)
 
       await expect(employeeService.fetchEmployees()).rejects.toMatchObject({
         type: 'SERVER_ERROR',
@@ -83,19 +86,13 @@ describe('employeeService', () => {
 
   describe('getEmployee', () => {
     test('should get single employee by id', async () => {
-      global.fetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockEmployee)
+      httpClient.get.mockResolvedValue({
+        data: mockEmployee
       })
 
       const result = await employeeService.getEmployee(1)
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/employees/1'),
-        expect.objectContaining({
-          method: 'GET'
-        })
-      )
+      expect(httpClient.get).toHaveBeenCalledWith('/employees/1')
 
       expect(result.id).toBe(mockEmployee.id)
       expect(result.fullName).toBe(`${mockEmployee.firstName} ${mockEmployee.lastName}`)
@@ -104,12 +101,14 @@ describe('employeeService', () => {
     })
 
     test('should handle 404 errors', async () => {
-      global.fetch.mockResolvedValue({
-        ok: false,
-        status: 404,
-        statusText: 'Not Found',
-        json: () => Promise.resolve({})
-      })
+      const axiosError = {
+        response: {
+          status: 404,
+          data: {}
+        },
+        message: 'Request failed with status code 404'
+      }
+      httpClient.get.mockRejectedValue(axiosError)
 
       await expect(employeeService.getEmployee(999)).rejects.toMatchObject({
         type: 'NOT_FOUND',
@@ -129,24 +128,13 @@ describe('employeeService', () => {
     test('should create new employee', async () => {
       const newEmployeeData = createValidEmployeeFormData()
       
-      global.fetch.mockResolvedValue({
-        ok: true,
-        status: 201,
-        json: () => Promise.resolve({ ...mockEmployee, ...newEmployeeData })
+      httpClient.post.mockResolvedValue({
+        data: { ...mockEmployee, ...newEmployeeData }
       })
 
       const result = await employeeService.createEmployee(newEmployeeData)
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/employees'),
-        expect.objectContaining({
-          method: 'POST',
-          headers: expect.objectContaining({
-            'Content-Type': 'application/json'
-          }),
-          body: JSON.stringify(newEmployeeData)
-        })
-      )
+      expect(httpClient.post).toHaveBeenCalledWith('/employees', newEmployeeData)
 
       expect(result.firstName).toBe(newEmployeeData.firstName)
       expect(result.email).toBe(newEmployeeData.email)
@@ -170,16 +158,18 @@ describe('employeeService', () => {
     })
 
     test('should handle validation errors from server', async () => {
-      global.fetch.mockResolvedValue({
-        ok: false,
-        status: 422,
-        statusText: 'Unprocessable Entity',
-        json: () => Promise.resolve({
-          violations: [
-            { propertyPath: 'email', message: 'Email already exists' }
-          ]
-        })
-      })
+      const axiosError = {
+        response: {
+          status: 422,
+          data: {
+            violations: [
+              { propertyPath: 'email', message: 'Email already exists' }
+            ]
+          }
+        },
+        message: 'Request failed with status code 422'
+      }
+      httpClient.post.mockRejectedValue(axiosError)
 
       const validData = createValidEmployeeFormData()
       
@@ -194,20 +184,13 @@ describe('employeeService', () => {
     test('should update existing employee', async () => {
       const updateData = createValidEmployeeFormData({ firstName: 'Updated' })
       
-      global.fetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve({ ...mockEmployee, ...updateData })
+      httpClient.put.mockResolvedValue({
+        data: { ...mockEmployee, ...updateData }
       })
 
       const result = await employeeService.updateEmployee(1, updateData)
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/employees/1'),
-        expect.objectContaining({
-          method: 'PUT',
-          body: JSON.stringify(updateData)
-        })
-      )
+      expect(httpClient.put).toHaveBeenCalledWith('/employees/1', updateData)
 
       expect(result.firstName).toBe('Updated')
     })
@@ -232,19 +215,11 @@ describe('employeeService', () => {
 
   describe('deleteEmployee', () => {
     test('should delete employee', async () => {
-      global.fetch.mockResolvedValue({
-        ok: true,
-        status: 204
-      })
+      httpClient.delete.mockResolvedValue({})
 
       const result = await employeeService.deleteEmployee(1)
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/employees/1'),
-        expect.objectContaining({
-          method: 'DELETE'
-        })
-      )
+      expect(httpClient.delete).toHaveBeenCalledWith('/employees/1')
 
       expect(result.success).toBe(true)
       expect(result.id).toBe(1)
@@ -257,12 +232,14 @@ describe('employeeService', () => {
     })
 
     test('should handle 404 when employee not found', async () => {
-      global.fetch.mockResolvedValue({
-        ok: false,
-        status: 404,
-        statusText: 'Not Found',
-        json: () => Promise.resolve({})
-      })
+      const axiosError = {
+        response: {
+          status: 404,
+          data: {}
+        },
+        message: 'Request failed with status code 404'
+      }
+      httpClient.delete.mockRejectedValue(axiosError)
 
       await expect(employeeService.deleteEmployee(999)).rejects.toMatchObject({
         type: 'NOT_FOUND',

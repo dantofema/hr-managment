@@ -326,11 +326,52 @@ docker-compose exec app env APP_ENV=test vendor/bin/phpunit --coverage-html cove
 ```
 
 > **⚠️ Importante**: Es necesario usar `env APP_ENV=test` antes del comando
-> PHPUnit en Docker para evitar errores de configuración del framework de testing.
+> PHPUnit en Docker para evitar errores de configuración del framework de
+> testing.
 > Sin esto, los tests fallarán con el error "Could not find service '
 > test.service_container'".
 
 ### Frontend Tests
+
+#### Vitest (Tests Unitarios y de Integración)
+
+```bash
+# Ejecutar todos los tests (una sola vez, sin modo watch)
+docker-compose run --rm node npm test -- --run
+
+# Ejecutar todos los tests
+docker-compose run --rm node npm test
+
+# Ejecutar tests unitarios
+docker-compose run --rm node npm run test:unit
+
+# Ejecutar tests de integración
+docker-compose run --rm node npm run test:integration
+
+# Ejecutar tests con coverage
+docker-compose run --rm node npm run test:coverage
+
+# Ejecutar tests con interfaz UI
+docker-compose run --rm node npm run test:ui
+
+# Ejecutar tests en modo watch
+docker-compose run --rm node npm run test:watch
+```
+
+#### Tests Específicos
+
+```bash
+# Ejecutar un archivo de test específico
+docker-compose run --rm node npx vitest src/components/__tests__/Login.test.js
+
+# Ejecutar tests que coincidan con un patrón
+docker-compose run --rm node npx vitest --run --reporter=verbose src/components/auth
+
+# Ejecutar tests con filtro por nombre
+docker-compose run --rm node npx vitest --run -t "should login successfully"
+```
+
+#### Cypress (Tests End-to-End)
 
 ```bash
 # Tests end-to-end con Cypress
@@ -339,6 +380,33 @@ docker-compose --profile testing up cypress
 # Modo interactivo (requiere X11)
 docker-compose exec node npx cypress open
 ```
+
+### Scripts de Testing Disponibles
+
+#### Backend (PHPUnit)
+
+- `vendor/bin/phpunit` - Tests completos
+- `vendor/bin/phpunit --coverage-text` - Con cobertura en terminal
+- `vendor/bin/phpunit --coverage-html coverage/` - Reporte HTML
+
+#### Frontend (Vitest)
+
+- `npm test` - Tests en modo interactivo
+- `npm run test:unit` - Tests unitarios
+- `npm run test:integration` - Tests de integración
+- `npm run test:coverage` - Tests con cobertura
+- `npm run test:ui` - Interfaz web de tests
+- `npm run test:watch` - Modo watch
+- `npm run test:all` - Tests unitarios y e2e
+
+### Configuración de Testing
+
+#### Vitest (Frontend)
+
+- **Entorno**: jsdom
+- **Setup**: `frontend/tests/setup.js`
+- **Coverage**: Configurado con v8 provider
+- **Thresholds**: Lines 80%, Functions 85%, Branches 75%, Statements 80%
 
 ### Estado Actual de Tests
 
