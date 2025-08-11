@@ -10,6 +10,7 @@ use ApiPlatform\Validator\Exception\ValidationException;
 use App\Application\Service\EmployeeApplicationService;
 use App\Application\UseCase\Employee\CreateEmployee\CreateEmployeeCommand;
 use App\Infrastructure\ApiResource\Employee as EmployeeApiResource;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 

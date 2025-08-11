@@ -25,11 +25,11 @@ abstract class DatabaseTestCase extends WebTestCase
         $this->entityManager = $this->container->get(EntityManagerInterface::class);
         $this->connection = $this->entityManager->getConnection();
         
+        // Clean database first to ensure complete isolation
+        $this->cleanDatabase();
+        
         // Start transaction for test isolation
         $this->connection->beginTransaction();
-        
-        // Clean database after transaction starts to ensure isolation
-        $this->cleanDatabase();
         
         // Clear EntityManager cache to ensure fresh data is loaded
         $this->entityManager->clear();
@@ -77,29 +77,55 @@ abstract class DatabaseTestCase extends WebTestCase
         // List of tables to truncate (in order to avoid foreign key constraints)
         $tablesToTruncate = [
             'payrolls',
-            'vacations',
+            'vacations', 
             'employees',
             'users'
         ];
         
+        // Disable foreign key checks temporarily for more reliable cleanup
+        try {
+            $this->connection->executeStatement('SET session_replication_role = replica;');
+        } catch (\Exception $e) {
+            // Might not be PostgreSQL, continue
+        }
+        
         foreach ($tablesToTruncate as $table) {
             try {
+                // Check if table exists first
+                $tableExists = $this->connection->fetchOne(
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = ?",
+                    [$table]
+                );
+                
+                if (!$tableExists) {
+                    continue;
+                }
+                
                 // Check count before truncate
                 $countBefore = $this->connection->fetchOne("SELECT COUNT(*) FROM {$table}");
                 
-                // Use CASCADE to handle foreign key constraints in PostgreSQL
-                $this->connection->executeStatement("TRUNCATE TABLE {$table} RESTART IDENTITY CASCADE");
-                
-                // Check count after truncate
-                $countAfter = $this->connection->fetchOne("SELECT COUNT(*) FROM {$table}");
-                
-                // Debug output
-                error_log("Table {$table}: Before={$countBefore}, After={$countAfter}");
+                if ($countBefore > 0) {
+                    // Use CASCADE to handle foreign key constraints in PostgreSQL
+                    $this->connection->executeStatement("TRUNCATE TABLE {$table} RESTART IDENTITY CASCADE");
+                    
+                    // Verify cleanup
+                    $countAfter = $this->connection->fetchOne("SELECT COUNT(*) FROM {$table}");
+                    
+                    // Debug output only if there was data to clean
+                    error_log("Table {$table}: Before={$countBefore}, After={$countAfter}");
+                }
             } catch (\Exception $e) {
-                // Table might not exist or might be empty, continue
-                error_log("Error truncating table {$table}: " . $e->getMessage());
+                // Log error but continue with other tables
+                error_log("Error cleaning table {$table}: " . $e->getMessage());
                 continue;
             }
+        }
+        
+        // Re-enable foreign key checks
+        try {
+            $this->connection->executeStatement('SET session_replication_role = DEFAULT;');
+        } catch (\Exception $e) {
+            // Might not be PostgreSQL, continue
         }
     }
 }

@@ -53,14 +53,15 @@ final readonly class EmployeeCollectionProvider implements ProviderInterface
         error_log("EmployeeCollectionProvider total employees: " . count($apiEmployees));
         error_log("EmployeeCollectionProvider offset: " . $offset . ", itemsPerPage: " . $itemsPerPage);
         
-        // Slice the array manually for pagination
+        // Let ArrayPaginator handle pagination internally
         $totalItems = count($apiEmployees);
-        $paginatedEmployees = array_slice($apiEmployees, $offset, $itemsPerPage);
+        error_log("ArrayPaginator params: fullArray=" . count($apiEmployees) . ", offset=$offset, itemsPerPage=$itemsPerPage");
         
-        error_log("EmployeeCollectionProvider returning " . count($paginatedEmployees) . " employees for page " . $page);
-        
-        // Return API Platform ArrayPaginator with sliced results
+        // Return API Platform ArrayPaginator with full results - it handles pagination internally
         // ArrayPaginator constructor: (array $results, int $firstResult, int $maxResults)
-        return new ArrayPaginator($paginatedEmployees, $offset, $itemsPerPage);
+        $paginator = new ArrayPaginator($apiEmployees, $offset, $itemsPerPage);
+        error_log("ArrayPaginator getTotalItems(): " . $paginator->getTotalItems());
+        error_log("ArrayPaginator count(): " . $paginator->count());
+        return $paginator;
     }
 }
