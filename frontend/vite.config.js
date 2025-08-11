@@ -25,6 +25,11 @@ export default defineConfig({
         target: 'http://app:8000',
         changeOrigin: true,
         secure: false
+      },
+      '/bundles': {
+        target: 'http://app:8000',
+        changeOrigin: true,
+        secure: false
       }
     }
   },

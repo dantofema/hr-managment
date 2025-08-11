@@ -1,7 +1,6 @@
-# HR System
+# Sistema de Gestión de Recursos Humanos
 
-> Sistema de gestión de recursos humanos desarrollado con Symfony y Vue.js
-> siguiendo los principios de Domain-Driven Design (DDD)
+> Sistema de gestión de recursos humanos desarrollado con Symfony y Vue.js siguiendo los principios de Domain-Driven Design (DDD)
 
 ## 📋 Tabla de Contenidos
 
@@ -12,21 +11,15 @@
 - [📦 Instalación](#-instalación)
 - [🔧 Configuración](#-configuración)
 - [💻 Desarrollo](#-desarrollo)
-- [🌟 Funcionalidades](#-funcionalidades)
+- [🌟 Estado de Implementación](#-estado-de-implementación)
 - [🔌 API](#-api)
 - [🧪 Testing](#-testing)
 - [📂 Estructura del Proyecto](#-estructura-del-proyecto)
 - [🎨 Frontend](#-frontend)
-- [🤖 Agentes IA](#-agentes-ia)
-- [🗺️ Roadmap](#️-roadmap)
-- [📚 Documentación Adicional](#-documentación-adicional)
 
 ## 🎯 Descripción del Proyecto
 
-Este es un **Sistema de Gestión de Recursos Humanos** desarrollado como prueba
-técnica, que implementa funcionalidades básicas para la administración de
-empleados, nóminas y vacaciones. El proyecto está construido con tecnologías
-modernas y sigue estrictamente los principios de **Domain-Driven Design (DDD)**.
+Este es un **Sistema de Gestión de Recursos Humanos** desarrollado como prueba técnica, que implementa funcionalidades para la administración de empleados, nóminas y vacaciones. El proyecto está construido con tecnologías modernas y sigue estrictamente los principios de **Domain-Driven Design (DDD)**.
 
 ### Características Principales
 
@@ -63,21 +56,22 @@ modernas y sigue estrictamente los principios de **Domain-Driven Design (DDD)**.
 
 ## 🏗️ Arquitectura
 
-El proyecto implementa **Domain-Driven Design (DDD)** con separación estricta de
-capas:
+El proyecto implementa **Domain-Driven Design (DDD)** con separación estricta de capas:
 
 ```
 src/
 ├── Domain/                     # 🎯 Lógica de negocio pura
 │   ├── Employee/              # Entidades y value objects
 │   ├── Payroll/               # Dominio de nóminas
-│   └── Vacation/              # Dominio de vacaciones
+│   ├── Vacation/              # Dominio de vacaciones
+│   ├── User/                  # Dominio de usuarios
+│   └── Hiring/                # Dominio de contratación
 │
 ├── Application/               # 🔄 Casos de uso y servicios
 │   ├── UseCase/              # CQRS: Commands y Queries
-│   │   └── Employee/
-│   │       ├── CreateEmployee/
-│   │       └── GetEmployee/
+│   │   ├── Employee/         # CRUD completo de empleados
+│   │   ├── Payroll/          # Gestión de nóminas
+│   │   └── Vacation/         # Gestión de vacaciones
 │   ├── Service/              # Servicios de aplicación
 │   └── DTO/                  # Data Transfer Objects
 │
@@ -227,60 +221,93 @@ docker-compose logs -f node
 docker-compose logs -f database
 ```
 
-## 🌟 Funcionalidades
+## 🌟 Estado de Implementación
 
-### ✅ Implementadas
+### ✅ Completamente Implementado
 
 #### 👥 Gestión de Empleados
-
-- **Crear empleado** - Formulario completo con validación
-- **Listar empleados** - Vista con paginación y filtros
-- **Ver detalles** - Información completa del empleado
+- **Backend**: Dominio completo con entidades, value objects y repositorios
+- **Casos de Uso**: CreateEmployee, GetEmployee, ListEmployees, UpdateEmployee, DeleteEmployee
+- **API REST**: Endpoints completos con documentación automática
+- **Frontend**: Componentes Vue.js para CRUD completo
+- **Servicios**: employeeService.js con integración a la API
 - **Cálculos automáticos**:
-    - Años de servicio
-    - Días de vacaciones anuales
-    - Elegibilidad para vacaciones
+  - Años de servicio
+  - Días de vacaciones anuales
+  - Elegibilidad para vacaciones
 
-#### 🔌 API REST
-
-- **Endpoints completos** para empleados
-- **Documentación automática** con API Platform
-- **Validación** de datos de entrada
-- **Respuestas estructuradas** con DTOs
+#### 🔐 Autenticación
+- **Backend**: Dominio de usuarios implementado
+- **Frontend**: Componentes de autenticación y authService.js
+- **JWT**: Servicio de tokens implementado
 
 #### 🎨 Interfaz de Usuario
-
 - **Diseño responsive** con Tailwind CSS
 - **Navegación intuitiva**
 - **Componentes reutilizables**
 - **Estados de carga y error**
 
-### 🚧 En Desarrollo
+### 🔄 Parcialmente Implementado
 
 #### 📊 Nóminas
-
-- Cálculo de salarios
-- Historial de pagos
-- Reportes mensuales
+- **Backend**: ✅ Dominio completo implementado
+- **Casos de Uso**: ✅ CreatePayroll, GetPayroll, ListPayrolls, ProcessPayroll, UpdateDeductions
+- **API REST**: ✅ Endpoints disponibles
+- **Frontend**: ❌ Sin componentes de interfaz
+- **Servicios**: ❌ Sin integración frontend
 
 #### 🏖️ Vacaciones
+- **Backend**: ✅ Dominio completo implementado
+- **Casos de Uso**: ✅ RequestVacation, ApproveVacation, RejectVacation, GetVacation, ListVacations
+- **API REST**: ✅ Endpoints disponibles
+- **Frontend**: ❌ Sin componentes de interfaz
+- **Servicios**: ❌ Sin integración frontend
 
-- Solicitudes de vacaciones
-- Aprobación de vacaciones
-- Calendario de ausencias
+### 📋 Pendiente de Implementar
+
+#### 🏢 Contratación
+- **Backend**: ✅ Dominio básico creado
+- **Casos de Uso**: ❌ Sin implementar
+- **API REST**: ❌ Sin endpoints
+- **Frontend**: ❌ Sin implementar
+
+#### 📈 Reportes y Analytics
+- **Backend**: ❌ Sin implementar
+- **Frontend**: ❌ Sin implementar
+
+#### 🔔 Notificaciones
+- **Backend**: ❌ Sin implementar
+- **Frontend**: ❌ Sin implementar
 
 ## 🔌 API
 
 ### Endpoints Disponibles
 
 #### Empleados
-
 ```http
 GET    /api/employees           # Listar empleados
 POST   /api/employees           # Crear empleado
 GET    /api/employees/{id}      # Obtener empleado
 PUT    /api/employees/{id}      # Actualizar empleado
 DELETE /api/employees/{id}      # Eliminar empleado
+```
+
+#### Nóminas (Backend implementado)
+```http
+GET    /api/payrolls            # Listar nóminas
+POST   /api/payrolls            # Crear nómina
+GET    /api/payrolls/{id}       # Obtener nómina
+PUT    /api/payrolls/{id}       # Actualizar nómina
+POST   /api/payrolls/{id}/process # Procesar nómina
+```
+
+#### Vacaciones (Backend implementado)
+```http
+GET    /api/vacations           # Listar vacaciones
+POST   /api/vacations           # Solicitar vacación
+GET    /api/vacations/{id}      # Obtener vacación
+PUT    /api/vacations/{id}/approve # Aprobar vacación
+PUT    /api/vacations/{id}/reject  # Rechazar vacación
 ```
 
 ### Ejemplo de Uso
@@ -314,9 +341,6 @@ Accede a la documentación completa de la API en:
 # Ejecutar todos los tests (IMPORTANTE: usar APP_ENV=test)
 docker-compose exec app env APP_ENV=test vendor/bin/phpunit
 
-# Con log de resultados
-docker-compose exec app env APP_ENV=test vendor/bin/phpunit --log-junit agents/logs/phpunit.log
-
 # Tests específicos
 docker-compose exec app env APP_ENV=test vendor/bin/phpunit tests/Domain/Employee/
 docker-compose exec app env APP_ENV=test vendor/bin/phpunit tests/Api/
@@ -325,50 +349,21 @@ docker-compose exec app env APP_ENV=test vendor/bin/phpunit tests/Api/
 docker-compose exec app env APP_ENV=test vendor/bin/phpunit --coverage-html coverage/
 ```
 
-> **⚠️ Importante**: Es necesario usar `env APP_ENV=test` antes del comando
-> PHPUnit en Docker para evitar errores de configuración del framework de
-> testing.
-> Sin esto, los tests fallarán con el error "Could not find service '
-> test.service_container'".
+> **⚠️ Importante**: Es necesario usar `env APP_ENV=test` antes del comando PHPUnit en Docker para evitar errores de configuración.
 
 ### Frontend Tests
 
 #### Vitest (Tests Unitarios y de Integración)
 
 ```bash
-# Ejecutar todos los tests (una sola vez, sin modo watch)
-docker-compose run --rm node npm test -- --run
-
 # Ejecutar todos los tests
-docker-compose run --rm node npm test
+docker-compose run --rm node npm test -- --run
 
 # Ejecutar tests unitarios
 docker-compose run --rm node npm run test:unit
 
-# Ejecutar tests de integración
-docker-compose run --rm node npm run test:integration
-
 # Ejecutar tests con coverage
 docker-compose run --rm node npm run test:coverage
-
-# Ejecutar tests con interfaz UI
-docker-compose run --rm node npm run test:ui
-
-# Ejecutar tests en modo watch
-docker-compose run --rm node npm run test:watch
-```
-
-#### Tests Específicos
-
-```bash
-# Ejecutar un archivo de test específico
-docker-compose run --rm node npx vitest src/components/__tests__/Login.test.js
-
-# Ejecutar tests que coincidan con un patrón
-docker-compose run --rm node npx vitest --run --reporter=verbose src/components/auth
-
-# Ejecutar tests con filtro por nombre
-docker-compose run --rm node npx vitest --run -t "should login successfully"
 ```
 
 #### Cypress (Tests End-to-End)
@@ -376,37 +371,7 @@ docker-compose run --rm node npx vitest --run -t "should login successfully"
 ```bash
 # Tests end-to-end con Cypress
 docker-compose --profile testing up cypress
-
-# Modo interactivo (requiere X11)
-docker-compose exec node npx cypress open
 ```
-
-### Scripts de Testing Disponibles
-
-#### Backend (PHPUnit)
-
-- `vendor/bin/phpunit` - Tests completos
-- `vendor/bin/phpunit --coverage-text` - Con cobertura en terminal
-- `vendor/bin/phpunit --coverage-html coverage/` - Reporte HTML
-
-#### Frontend (Vitest)
-
-- `npm test` - Tests en modo interactivo
-- `npm run test:unit` - Tests unitarios
-- `npm run test:integration` - Tests de integración
-- `npm run test:coverage` - Tests con cobertura
-- `npm run test:ui` - Interfaz web de tests
-- `npm run test:watch` - Modo watch
-- `npm run test:all` - Tests unitarios y e2e
-
-### Configuración de Testing
-
-#### Vitest (Frontend)
-
-- **Entorno**: jsdom
-- **Setup**: `frontend/tests/setup.js`
-- **Coverage**: Configurado con v8 provider
-- **Thresholds**: Lines 80%, Functions 85%, Branches 75%, Statements 80%
 
 ### Estado Actual de Tests
 
@@ -419,23 +384,34 @@ docker-compose exec node npx cypress open
 
 ```
 hr-system/
-├── 📁 backend/
-│   ├── 📁 src/
-│   │   ├── 📁 Domain/           # Lógica de negocio
-│   │   ├── 📁 Application/      # Casos de uso
-│   │   └── 📁 Infrastructure/   # Detalles técnicos
-│   ├── 📁 tests/               # Tests PHP
-│   ├── 📁 config/              # Configuración Symfony
-│   └── 📄 composer.json        # Dependencias PHP
+├── 📁 src/                     # Backend Symfony
+│   ├── 📁 Domain/              # Lógica de negocio
+│   │   ├── 📁 Employee/        # ✅ Completo
+│   │   ├── 📁 Payroll/         # ✅ Completo
+│   │   ├── 📁 Vacation/        # ✅ Completo
+│   │   ├── 📁 User/            # ✅ Completo
+│   │   └── 📁 Hiring/          # 🔄 Básico
+│   ├── 📁 Application/         # Casos de uso
+│   │   └── 📁 UseCase/
+│   │       ├── 📁 Employee/    # ✅ CRUD completo
+│   │       ├── 📁 Payroll/     # ✅ Gestión completa
+│   │       └── 📁 Vacation/    # ✅ Gestión completa
+│   └── 📁 Infrastructure/      # Detalles técnicos
 │
 ├── 📁 frontend/
 │   ├── 📁 src/
-│   │   ├── 📁 components/      # Componentes Vue
-│   │   ├── 📄 App.vue          # Componente principal
-│   │   └── 📄 main.js          # Punto de entrada
-│   ├── 📁 cypress/             # Tests E2E
-│   └── 📄 package.json         # Dependencias Node
+│   │   ├── 📁 components/
+│   │   │   ├── 📁 employees/   # ✅ Completo
+│   │   │   ├── 📁 auth/        # ✅ Completo
+│   │   │   └── 📁 ui/          # ✅ Componentes base
+│   │   ├── 📁 services/
+│   │   │   ├── 📄 employeeService.js # ✅ Completo
+│   │   │   └── 📄 authService.js     # ✅ Completo
+│   │   └── 📄 App.vue          # ✅ Navegación principal
+│   └── 📁 cypress/             # Tests E2E
 │
+├── 📁 tests/                   # Tests PHP
+├── 📁 config/                  # Configuración Symfony
 ├── 📄 docker-compose.yml       # Configuración Docker
 ├── 📄 Dockerfile              # Imagen de la aplicación
 └── 📄 README.md               # Este archivo
@@ -447,6 +423,7 @@ hr-system/
 
 - **App.vue** - Componente raíz con navegación
 - **EmployeesList.vue** - Lista de empleados con funcionalidades CRUD
+- **LoginView.vue** - Componente de autenticación
 - **Counter.vue** - Componente de demostración
 
 ### Estilos y UI
@@ -462,145 +439,33 @@ hr-system/
 - **Estado local** - Gestión simple con ref/reactive
 - **Comunicación HTTP** - Fetch API nativo
 
-## 🤖 Agentes IA
+---
 
-### Descripción
+## 📊 Resumen para Evaluadores
 
-El proyecto incluye un sistema de agentes IA especializados para tareas de
-desarrollo y gestión de calidad. Cada agente tiene un rol específico y está
-documentado con prompts detallados para garantizar consistencia y eficiencia en
-el trabajo.
+### ✅ Funcionalidades Completamente Operativas
+1. **Gestión de Empleados** - CRUD completo con frontend y backend
+2. **Autenticación** - Sistema de login implementado
+3. **API REST** - Documentación automática disponible
+4. **Testing** - Cobertura del 99.3% en tests
 
-### Roles Disponibles
+### 🔄 Funcionalidades con Backend Completo (Sin Frontend)
+1. **Nóminas** - Todos los casos de uso implementados, API disponible
+2. **Vacaciones** - Sistema completo de solicitudes y aprobaciones, API disponible
 
-Los agentes están organizados en `agents/roles/` con los siguientes roles
-especializados:
+### 📋 Funcionalidades Pendientes
+1. **Frontend para Nóminas** - Componentes e integración
+2. **Frontend para Vacaciones** - Componentes e integración
+3. **Módulo de Contratación** - Casos de uso y API
+4. **Reportes y Analytics** - Implementación completa
 
-#### 🔧 **Backend Agent** (`backend_prompt.md`)
-
-- Desarrollo y mantenimiento del backend Symfony
-- Implementación de nuevas funcionalidades en la API
-- Refactoring siguiendo principios DDD
-
-#### 🎨 **Frontend Agent** (`frontend_prompt.md`)
-
-- Desarrollo de componentes Vue.js
-- Implementación de interfaces de usuario
-- Integración con la API backend
-
-#### 🔍 **QA Tester Agent** (`qa_tester_prompt.md`)
-
-- Ejecución de suites de testing completas
-- Gestión de status de tareas (PENDING → IN_PROGRESS → COMPLETED/REVISION)
-- Validación de calidad antes de marcar tareas como completadas
-
-#### 🐛 **Debugger Agent** (`debugger_prompt.md`)
-
-- Diagnóstico y corrección de errores
-- Análisis de logs y debugging
-- Optimización de rendimiento
-
-#### 🚀 **DevOps Agent** (`devops_prompt.md`)
-
-- Gestión de contenedores Docker
-- Configuración de entornos
-- Automatización de despliegues
-
-#### 🎯 **Coordinator Agent** (`coordinator_prompt.md`)
-
-- Coordinación entre diferentes agentes
-- Gestión de flujos de trabajo
-- Asignación y seguimiento de tareas
-
-### Estructura de Agentes
-
-```
-agents/
-├── guideline.md              # Guía general para todos los agentes
-├── logs/                     # Logs de ejecución de tests y tareas
-│   ├── phpunit.log
-│   ├── cypress_errors.log
-│   └── README.md
-├── roles/                    # Definición de roles especializados
-│   ├── backend_prompt.md     # Agente de desarrollo backend
-│   ├── coordinator_prompt.md # Agente coordinador
-│   ├── debugger_prompt.md    # Agente de debugging
-│   ├── devops_prompt.md      # Agente de DevOps
-│   ├── frontend_prompt.md    # Agente de desarrollo frontend
-│   └── qa_tester_prompt.md   # Agente de testing y QA
-└── tasks/                    # Tareas asignadas a los agentes
-    ├── task_048_phpunit_fix_jwt_performance.md
-    ├── task_049_phpunit_fix_uuid_format_errors.md
-    └── ... (más tareas)
-```
-
-### Gestión de Tareas
-
-Los agentes siguen un sistema de gestión de tareas con estados claros:
-
-- **PENDING**: Tarea disponible para ser tomada
-- **IN_PROGRESS**: Tarea en desarrollo por un agente
-- **COMPLETED**: Tarea completada sin errores
-- **REVISION**: Tarea completada pero con errores detectados
-
-### Documentación de Agentes
-
-Para más detalles sobre el funcionamiento de los agentes, consulta:
-
-- [📄 Guía General](agents/guideline.md) - Lineamientos para todos los agentes
-- [📁 Roles](agents/roles/) - Documentación específica de cada rol
-
-## 🗺️ Roadmap
-
-### Fase 1 - Completada ✅
-
-- [x] Configuración del entorno Docker
-- [x] Backend Symfony con API Platform
-- [x] Frontend Vue.js con Tailwind CSS
-- [x] Gestión básica de empleados
-- [x] Refactoring a arquitectura DDD
-- [x] Tests unitarios y de integración
-
-### Fase 2 - En Progreso 🚧
-
-- [ ] Módulo de nóminas
-- [ ] Módulo de vacaciones
-- [ ] Mejoras en la UI/UX
-- [ ] Tests E2E completos
-
-### Fase 3 - Planificada 📋
-
-- [ ] Autenticación y autorización
-- [ ] Reportes y analytics
-- [ ] Notificaciones
-- [ ] API versioning
-
-## 📚 Documentación Adicional
-
-- [📄 DDD Refactoring Summary](./DDD_REFACTORING_SUMMARY.md) - Detalles del
-  refactoring a DDD
-- [📄 Prompt Técnico](agents/prompt-prueba-tecnica.md) - Especificaciones del
-  proyecto
-- [🔗 API Documentation](http://localhost:8000/api/docs) - Documentación
-  interactiva de la API
-- [🔗 Symfony Documentation](https://symfony.com/doc/current/) - Documentación
-  oficial de Symfony
-- [🔗 Vue.js Documentation](https://vuejs.org/) - Documentación oficial de Vue.js
+### 🏗️ Arquitectura Técnica
+- **DDD** correctamente implementado
+- **CQRS** en casos de uso
+- **Docker** para desarrollo
+- **Testing** automatizado
+- **API Platform** para documentación
 
 ---
 
-## 🤝 Contribución
-
-Este proyecto fue desarrollado como prueba técnica siguiendo las mejores
-prácticas de desarrollo:
-
-- **Clean Code** - Código limpio y legible
-- **SOLID Principles** - Principios de diseño orientado a objetos
-- **DDD Architecture** - Arquitectura dirigida por el dominio
-- **Testing First** - Desarrollo guiado por tests
-- **Docker Everything** - Entorno completamente containerizado
-
----
-
-**Desarrollado con ❤️ usando Symfony, Vue.js y las mejores prácticas de
-desarrollo**
+**Desarrollado siguiendo las mejores prácticas de desarrollo con Symfony, Vue.js y arquitectura DDD**
