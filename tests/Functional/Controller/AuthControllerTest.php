@@ -40,7 +40,7 @@ class AuthControllerTest extends WebTestCase
         
         // Create a test user
         $testUser = new User();
-        $testUserId = uniqid('test-user-1-');
+        $testUserId = Uuid::generate()->toString();
         $testUserEmail = 'test-' . uniqid() . '@example.com';
         $testUser->setId($testUserId)
                  ->setEmail($testUserEmail)
@@ -107,7 +107,7 @@ class AuthControllerTest extends WebTestCase
         
         // Create a test user
         $testUser = new User();
-        $testUserId = uniqid('test-user-2-');
+        $testUserId = Uuid::generate()->toString();
         $testUserEmail = 'test2-' . uniqid() . '@example.com';
         $testUser->setId($testUserId)
                  ->setEmail($testUserEmail)

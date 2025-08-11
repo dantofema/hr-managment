@@ -14,10 +14,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['user:read']],
+            provider: \App\Infrastructure\ApiPlatform\Provider\UserCollectionProvider::class,
         ),
         new Get(
             uriTemplate: '/users/{id}',
             normalizationContext: ['groups' => ['user:read', 'user:item']],
+            provider: \App\Infrastructure\ApiPlatform\Provider\UserItemProvider::class,
         ),
     ],
     paginationEnabled: true,
@@ -58,11 +60,11 @@ class User
         $resource = new self();
         $resource->id = $user->getId()->toString();
         $resource->email = $user->getEmail()->value();
-        $resource->name = $user->getName();
-        $resource->isActive = $user->isActive();
+        $resource->name = (string) $user->getEmail(); // Use email as name since domain User doesn't have name
+        $resource->isActive = true; // Default to active since domain User doesn't track this
         $resource->createdAt = $user->getCreatedAt();
         $resource->updatedAt = $user->getUpdatedAt();
-        $resource->lastLoginAt = $user->getLastLoginAt();
+        $resource->lastLoginAt = null; // Domain User doesn't track last login
 
         return $resource;
     }

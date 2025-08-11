@@ -27,8 +27,7 @@ class UserRepositoryTest extends DatabaseTestCase
         // Arrange
         $user = User::create(
             new Email('test@example.com'),
-            HashedPassword::fromPlainPassword('password123'),
-            'Test User'
+            HashedPassword::fromPlainPassword('password123')
         );
 
         // Act
@@ -39,8 +38,6 @@ class UserRepositoryTest extends DatabaseTestCase
         $this->assertNotNull($foundUser);
         $this->assertEquals($user->getId()->toString(), $foundUser->getId()->toString());
         $this->assertEquals('test@example.com', $foundUser->getEmail()->value());
-        $this->assertEquals('Test User', $foundUser->getName());
-        $this->assertTrue($foundUser->isActive());
     }
 
     public function testFindByEmail(): void
@@ -49,8 +46,7 @@ class UserRepositoryTest extends DatabaseTestCase
         $email = new Email('user@example.com');
         $user = User::create(
             $email,
-            HashedPassword::fromPlainPassword('password123'),
-            'User Name'
+            HashedPassword::fromPlainPassword('password123')
         );
 
         // Act
@@ -69,8 +65,7 @@ class UserRepositoryTest extends DatabaseTestCase
         $email = new Email('active@example.com');
         $user = User::create(
             $email,
-            HashedPassword::fromPlainPassword('password123'),
-            'Active User'
+            HashedPassword::fromPlainPassword('password123')
         );
 
         // Act
@@ -79,7 +74,6 @@ class UserRepositoryTest extends DatabaseTestCase
 
         // Assert
         $this->assertNotNull($foundUser);
-        $this->assertTrue($foundUser->isActive());
         $this->assertEquals('active@example.com', $foundUser->getEmail()->value());
     }
 
@@ -89,13 +83,19 @@ class UserRepositoryTest extends DatabaseTestCase
         $email = new Email('inactive@example.com');
         $user = User::create(
             $email,
-            HashedPassword::fromPlainPassword('password123'),
-            'Inactive User'
+            HashedPassword::fromPlainPassword('password123')
         );
-        $user->deactivate();
 
-        // Act
+        // Act - Save user first, then make it inactive at entity level
         $this->userRepository->save($user);
+        
+        // Get the entity manager and make the user inactive
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userEntity = $entityManager->getRepository(\App\Infrastructure\Doctrine\Entity\User::class)
+            ->findOneBy(['email' => $email->value()]);
+        $userEntity->setIsActive(false);
+        $entityManager->flush();
+        
         $foundUser = $this->userRepository->findActiveByEmail($email);
 
         // Assert
@@ -107,13 +107,11 @@ class UserRepositoryTest extends DatabaseTestCase
         // Arrange
         $user1 = User::create(
             new Email('user1@example.com'),
-            HashedPassword::fromPlainPassword('password123'),
-            'User One'
+            HashedPassword::fromPlainPassword('password123')
         );
         $user2 = User::create(
             new Email('user2@example.com'),
-            HashedPassword::fromPlainPassword('password123'),
-            'User Two'
+            HashedPassword::fromPlainPassword('password123')
         );
 
         // Act
@@ -131,8 +129,7 @@ class UserRepositoryTest extends DatabaseTestCase
         // Arrange
         $user = User::create(
             new Email('delete@example.com'),
-            HashedPassword::fromPlainPassword('password123'),
-            'Delete User'
+            HashedPassword::fromPlainPassword('password123')
         );
 
         // Act

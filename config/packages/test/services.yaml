@@ -1,4 +1,22 @@
 services:
     # Make EntityManager public for tests
     Doctrine\ORM\EntityManagerInterface:
+        alias: doctrine.orm.entity_manager
         public: true
+
+    # Make AuthenticationService public for integration tests
+    App\Application\User\Service\AuthenticationService:
+        arguments:
+            - '@App\Domain\User\UserRepositoryInterface'
+            - '@Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface'
+        public: true
+
+    # Make JWT Token Manager public for tests
+    Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface:
+        alias: lexik_jwt_authentication.jwt_manager
+        public: true
+
+    # Ensure UserRepositoryInterface is available
+    App\Domain\User\UserRepositoryInterface:
+        alias: App\Infrastructure\Doctrine\Repository\UserRepository
+        public: false

@@ -42,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $lastLoginAt = null;
 
+    #[ORM\Column(type: 'json')]
+    private array $roles = ['ROLE_USER'];
+
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
@@ -53,23 +56,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $entity = new self();
         $entity->id = $user->getId()->toString();
         $entity->email = $user->getEmail()->value();
-        $entity->password = $user->getPassword()->value();
+        $entity->password = $user->getHashedPassword()->value();
         $entity->name = (string) $user->getEmail(); // Use email as name since domain User doesn't have name
-        $entity->isActive = true; // Default to active since domain User doesn't track this
+        $entity->roles = $user->getRoles(); // Preserve roles from domain user
+        $entity->isActive = $user->isActive(); // Preserve active status from domain user
         $entity->createdAt = $user->getCreatedAt();
         $entity->updatedAt = $user->getUpdatedAt();
-        $entity->lastLoginAt = null; // Domain User doesn't track last login
+        $entity->lastLoginAt = $user->getLastLogin();
 
         return $entity;
     }
 
     public function toDomain(): DomainUser
     {
+        // Ensure we have a valid UUID format before creating the domain object
+        if (empty($this->id) || !\Ramsey\Uuid\Uuid::isValid($this->id)) {
+            throw new \InvalidArgumentException(
+                sprintf('Invalid UUID format for user ID: %s', $this->id ?? 'null')
+            );
+        }
+        
         $user = new DomainUser(
             new Uuid($this->id),
             new Email($this->email),
             new HashedPassword($this->password),
-            ['ROLE_USER'] // Default roles since domain User expects array
+            $this->roles // Use stored roles from entity
         );
 
         // Set timestamps using reflection since they're private
@@ -83,6 +94,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $updatedAtProperty = $reflection->getProperty('updatedAt');
             $updatedAtProperty->setAccessible(true);
             $updatedAtProperty->setValue($user, $this->updatedAt);
+        }
+
+        // Set active status using reflection
+        $isActiveProperty = $reflection->getProperty('isActive');
+        $isActiveProperty->setAccessible(true);
+        $isActiveProperty->setValue($user, $this->isActive);
+
+        // Set lastLogin using reflection
+        if ($this->lastLoginAt) {
+            $lastLoginProperty = $reflection->getProperty('lastLogin');
+            $lastLoginProperty->setAccessible(true);
+            $lastLoginProperty->setValue($user, $this->lastLoginAt);
         }
 
         return $user;
@@ -177,8 +200,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        // Return default role for all users
-        return ['ROLE_USER'];
+        // Ensure ROLE_USER is always present
+        $roles = $this->roles;
+        if (!in_array('ROLE_USER', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
+        return array_unique($roles);
     }
 
     public function eraseCredentials(): void

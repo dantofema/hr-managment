@@ -5,47 +5,57 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Authentication;
 
 use App\Infrastructure\Doctrine\Entity\User;
+use App\Domain\User\User as DomainUser;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\HashedPassword;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Support\DatabaseTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthenticationFlowTest extends WebTestCase
+class AuthenticationFlowTest extends DatabaseTestCase
 {
-    private EntityManagerInterface $entityManager;
     private array $testUsers = [];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        
+        // Clean up any existing test users
+        $this->entityManager->createQuery('DELETE FROM App\\Infrastructure\\Doctrine\\Entity\\User u WHERE u.email IN (:emails)')
+            ->setParameter('emails', ['valid.user@example.com', 'admin@example.com'])
+            ->execute();
+        
         $this->createTestUsers();
     }
 
     private function createTestUsers(): void
     {
         // Create test users for different scenarios
-        $this->testUsers['valid'] = User::create(
+        $domainUser1 = DomainUser::create(
             new Email('valid.user@example.com'),
             HashedPassword::fromPlainPassword('ValidPassword123!')
         );
+        $this->testUsers['valid'] = User::fromDomain($domainUser1);
 
-        $this->testUsers['admin'] = User::create(
+        $domainUser2 = DomainUser::create(
             new Email('admin@example.com'),
-            HashedPassword::fromPlainPassword('AdminPassword123!')
+            HashedPassword::fromPlainPassword('AdminPassword123!'),
+            ['ROLE_USER', 'ROLE_ADMIN']
         );
-        $this->testUsers['admin']->addRole('ROLE_ADMIN');
+        $this->testUsers['admin'] = User::fromDomain($domainUser2);
 
         foreach ($this->testUsers as $user) {
             $this->entityManager->persist($user);
         }
         $this->entityManager->flush();
+        
+        // Commit transaction so users are visible to HTTP requests
+        $this->connection->commit();
+        $this->connection->beginTransaction();
     }
 
     public function testCompleteAuthenticationFlow(): void
     {
-        $client = static::createClient();
+        $client = static::getClient();
 
         // Step 1: Attempt to access protected resource without authentication
         $client->request('GET', '/api/employees');
@@ -66,7 +76,7 @@ class AuthenticationFlowTest extends WebTestCase
         $this->assertArrayHasKey('token', $loginResponse);
         $this->assertArrayHasKey('user', $loginResponse);
         $this->assertEquals('valid.user@example.com', $loginResponse['user']['email']);
-        $this->assertEquals('Valid Test User', $loginResponse['user']['name']);
+        $this->assertEquals('valid.user@example.com', $loginResponse['user']['name']);
 
         $token = $loginResponse['token'];
         $this->assertNotEmpty($token);
@@ -91,7 +101,7 @@ class AuthenticationFlowTest extends WebTestCase
 
     public function testLoginWithInvalidCredentials(): void
     {
-        $client = static::createClient();
+        $client = static::getClient();
 
         // Test with wrong password
         $client->request('POST', '/api/login_check', [], [], [
@@ -116,7 +126,7 @@ class AuthenticationFlowTest extends WebTestCase
 
     public function testAccessWithInvalidToken(): void
     {
-        $client = static::createClient();
+        $client = static::getClient();
 
         // Test with malformed token
         $client->request('GET', '/api/employees', [], [], [
@@ -139,7 +149,7 @@ class AuthenticationFlowTest extends WebTestCase
 
     public function testTokenExpiration(): void
     {
-        $client = static::createClient();
+        $client = static::getClient();
 
         // Login to get a token
         $client->request('POST', '/api/login_check', [], [], [
@@ -169,7 +179,7 @@ class AuthenticationFlowTest extends WebTestCase
 
     public function testRoleBasedAccess(): void
     {
-        $client = static::createClient();
+        $client = static::getClient();
 
         // Login as admin user
         $client->request('POST', '/api/login_check', [], [], [
@@ -212,23 +222,27 @@ class AuthenticationFlowTest extends WebTestCase
 
     public function testConcurrentSessions(): void
     {
-        $client1 = static::createClient();
-        $client2 = static::createClient();
+        $client1 = static::getClient();
+        $client2 = static::getClient();
 
-        // Login with same user from two different clients
-        foreach ([$client1, $client2] as $client) {
-            $client->request('POST', '/api/login_check', [], [], [
-                'CONTENT_TYPE' => 'application/json',
-            ], json_encode([
-                'email' => 'valid.user@example.com',
-                'password' => 'ValidPassword123!'
-            ]));
-
-            $this->assertResponseIsSuccessful();
-        }
-
-        // Both sessions should be valid
+        // Login with first client
+        $client1->request('POST', '/api/login_check', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'email' => 'valid.user@example.com',
+            'password' => 'ValidPassword123!'
+        ]));
+        $this->assertResponseIsSuccessful();
         $response1 = json_decode($client1->getResponse()->getContent(), true);
+
+        // Login with second client
+        $client2->request('POST', '/api/login_check', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'email' => 'valid.user@example.com',
+            'password' => 'ValidPassword123!'
+        ]));
+        $this->assertResponseIsSuccessful();
         $response2 = json_decode($client2->getResponse()->getContent(), true);
 
         $token1 = $response1['token'];
@@ -248,7 +262,7 @@ class AuthenticationFlowTest extends WebTestCase
 
     public function testLoginDataValidation(): void
     {
-        $client = static::createClient();
+        $client = static::getClient();
 
         // Test with missing email
         $client->request('POST', '/api/login_check', [], [], [
@@ -284,12 +298,12 @@ class AuthenticationFlowTest extends WebTestCase
 
     public function testUserLastLoginUpdate(): void
     {
-        $client = static::createClient();
+        $client = static::getClient();
 
         // Get user before login
         $userBefore = $this->entityManager
             ->getRepository(User::class)
-            ->findOneBy(['email' => new Email('valid.user@example.com')]);
+            ->findOneBy(['email' => 'valid.user@example.com']);
         
         $lastLoginBefore = $userBefore->getLastLoginAt();
 
@@ -317,7 +331,7 @@ class AuthenticationFlowTest extends WebTestCase
         parent::tearDown();
 
         // Clean up test data
-        $this->entityManager->createQuery('DELETE FROM App\Domain\User\User u WHERE u.email LIKE :email')
+        $this->entityManager->createQuery('DELETE FROM App\\Infrastructure\\Doctrine\\Entity\\User u WHERE u.email LIKE :email')
             ->setParameter('email', '%@example.com')
             ->execute();
 

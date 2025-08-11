@@ -20,7 +20,7 @@ class EmployeeControllerTest extends ApiTestCase
             'hiredAt' => '2024-01-15'
         ];
 
-        $response = $this->postJson('/api/employees', $employeeData);
+        $response = $this->postJsonAuthenticated('/api/employees', $employeeData);
 
         $this->assertApiResponse($response, 201);
         $data = $this->assertJsonResponse($response);
@@ -51,7 +51,7 @@ class EmployeeControllerTest extends ApiTestCase
             // Missing email, position, salaryAmount, salaryCurrency, hiredAt
         ];
 
-        $response = $this->postJson('/api/employees', $incompleteData);
+        $response = $this->postJsonAuthenticated('/api/employees', $incompleteData);
 
         $this->assertApiResponse($response, 400);
         $data = $this->assertJsonResponse($response);
@@ -62,7 +62,7 @@ class EmployeeControllerTest extends ApiTestCase
 
     public function testPostEmployeesEmptyData(): void
     {
-        $response = $this->postJson('/api/employees', []);
+        $response = $this->postJsonAuthenticated('/api/employees', []);
 
         $this->assertApiResponse($response, 400);
         $data = $this->assertJsonResponse($response);
@@ -73,12 +73,17 @@ class EmployeeControllerTest extends ApiTestCase
 
     public function testPostEmployeesInvalidJson(): void
     {
+        $headers = array_merge(
+            ['CONTENT_TYPE' => 'application/json'],
+            $this->getAuthHeaders()
+        );
+        
         $this->client->request(
             'POST',
             '/api/employees',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            $headers,
             'invalid json'
         );
 
@@ -103,7 +108,7 @@ class EmployeeControllerTest extends ApiTestCase
             'hiredAt' => 'invalid-date'
         ];
 
-        $response = $this->postJson('/api/employees', $employeeData);
+        $response = $this->postJsonAuthenticated('/api/employees', $employeeData);
 
         $this->assertApiResponse($response, 400);
         $data = $this->assertJsonResponse($response);
@@ -126,7 +131,7 @@ class EmployeeControllerTest extends ApiTestCase
                 'hiredAt' => '2024-02-01'
             ];
 
-            $response = $this->postJson('/api/employees', $employeeData);
+            $response = $this->postJsonAuthenticated('/api/employees', $employeeData);
 
             $this->assertApiResponse($response, 201);
             $data = $this->assertJsonResponse($response);
@@ -149,12 +154,12 @@ class EmployeeControllerTest extends ApiTestCase
             'hiredAt' => '2023-06-01'
         ];
 
-        $createResponse = $this->postJson('/api/employees', $employeeData);
+        $createResponse = $this->postJsonAuthenticated('/api/employees', $employeeData);
         $this->assertApiResponse($createResponse, 201);
         $createdEmployee = $this->assertJsonResponse($createResponse);
 
         // Then retrieve the employee
-        $response = $this->getJson("/api/employees/{$createdEmployee['id']}");
+        $response = $this->getJsonAuthenticated("/api/employees/{$createdEmployee['id']}");
 
         $this->assertApiResponse($response, 200);
         $data = $this->assertJsonResponse($response);
@@ -181,7 +186,7 @@ class EmployeeControllerTest extends ApiTestCase
     {
         $nonExistentId = '00000000-0000-0000-0000-000000000000';
 
-        $response = $this->getJson("/api/employees/{$nonExistentId}");
+        $response = $this->getJsonAuthenticated("/api/employees/{$nonExistentId}");
 
         $this->assertApiResponse($response, 404);
         $data = $this->assertJsonResponse($response);
@@ -194,7 +199,7 @@ class EmployeeControllerTest extends ApiTestCase
     {
         $invalidId = 'invalid-uuid';
 
-        $response = $this->getJson("/api/employees/{$invalidId}");
+        $response = $this->getJsonAuthenticated("/api/employees/{$invalidId}");
 
         $this->assertApiResponse($response, 500);
         $data = $this->assertJsonResponse($response);
@@ -228,14 +233,14 @@ class EmployeeControllerTest extends ApiTestCase
 
         $createdEmployees = [];
         foreach ($employees as $employeeData) {
-            $response = $this->postJson('/api/employees', $employeeData);
+            $response = $this->postJsonAuthenticated('/api/employees', $employeeData);
             $this->assertApiResponse($response, 201);
             $createdEmployees[] = $this->assertJsonResponse($response);
         }
 
         // Test that we can retrieve individual employees
         foreach ($createdEmployees as $employee) {
-            $response = $this->getJson("/api/employees/{$employee['id']}");
+            $response = $this->getJsonAuthenticated("/api/employees/{$employee['id']}");
             $this->assertApiResponse($response, 200);
             $data = $this->assertJsonResponse($response);
             $this->assertEquals($employee['id'], $data['id']);
@@ -255,12 +260,12 @@ class EmployeeControllerTest extends ApiTestCase
             'hiredAt' => (new \DateTimeImmutable('-2 years'))->format('Y-m-d')
         ];
 
-        $createResponse = $this->postJson('/api/employees', $employeeData);
+        $createResponse = $this->postJsonAuthenticated('/api/employees', $employeeData);
         $this->assertApiResponse($createResponse, 201);
         $createdEmployee = $this->assertJsonResponse($createResponse);
 
         // Retrieve and verify business calculations
-        $response = $this->getJson("/api/employees/{$createdEmployee['id']}");
+        $response = $this->getJsonAuthenticated("/api/employees/{$createdEmployee['id']}");
         $this->assertApiResponse($response, 200);
         $data = $this->assertJsonResponse($response);
 
@@ -284,7 +289,7 @@ class EmployeeControllerTest extends ApiTestCase
         ];
 
         // Step 1: Create employee
-        $createResponse = $this->postJson('/api/employees', $employeeData);
+        $createResponse = $this->postJsonAuthenticated('/api/employees', $employeeData);
         $this->assertApiResponse($createResponse, 201);
         $createdEmployee = $this->assertJsonResponse($createResponse);
 
@@ -293,7 +298,7 @@ class EmployeeControllerTest extends ApiTestCase
         $this->assertEquals('Workflow Test', $createdEmployee['fullName']);
 
         // Step 2: Retrieve employee
-        $getResponse = $this->getJson("/api/employees/{$createdEmployee['id']}");
+        $getResponse = $this->getJsonAuthenticated("/api/employees/{$createdEmployee['id']}");
         $this->assertApiResponse($getResponse, 200);
         $retrievedEmployee = $this->assertJsonResponse($getResponse);
 
@@ -327,7 +332,7 @@ class EmployeeControllerTest extends ApiTestCase
             'hiredAt' => '2024-01-01'
         ];
 
-        $response = $this->postJson('/api/employees', $employeeData);
+        $response = $this->postJsonAuthenticated('/api/employees', $employeeData);
 
         $this->assertApiResponse($response, 201);
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json'));

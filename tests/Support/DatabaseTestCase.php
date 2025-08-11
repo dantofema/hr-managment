@@ -6,10 +6,10 @@ namespace App\Tests\Support;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-abstract class DatabaseTestCase extends KernelTestCase
+abstract class DatabaseTestCase extends WebTestCase
 {
     protected EntityManagerInterface $entityManager;
     protected Connection $connection;
@@ -19,7 +19,8 @@ abstract class DatabaseTestCase extends KernelTestCase
     {
         parent::setUp();
         
-        self::bootKernel();
+        // Create client which boots the kernel
+        static::createClient();
         $this->container = static::getContainer();
         $this->entityManager = $this->container->get(EntityManagerInterface::class);
         $this->connection = $this->entityManager->getConnection();

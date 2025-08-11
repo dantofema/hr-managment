@@ -17,6 +17,7 @@
 - [🧪 Testing](#-testing)
 - [📂 Estructura del Proyecto](#-estructura-del-proyecto)
 - [🎨 Frontend](#-frontend)
+- [🤖 Agentes IA](#-agentes-ia)
 - [🗺️ Roadmap](#️-roadmap)
 - [📚 Documentación Adicional](#-documentación-adicional)
 
@@ -324,7 +325,10 @@ docker-compose exec app env APP_ENV=test vendor/bin/phpunit tests/Api/
 docker-compose exec app env APP_ENV=test vendor/bin/phpunit --coverage-html coverage/
 ```
 
-> **⚠️ Importante**: Es necesario usar `env APP_ENV=test` antes del comando PHPUnit en Docker para evitar errores de configuración del framework de testing. Sin esto, los tests fallarán con el error "Could not find service 'test.service_container'".
+> **⚠️ Importante**: Es necesario usar `env APP_ENV=test` antes del comando
+> PHPUnit en Docker para evitar errores de configuración del framework de testing.
+> Sin esto, los tests fallarán con el error "Could not find service '
+> test.service_container'".
 
 ### Frontend Tests
 
@@ -389,6 +393,94 @@ hr-system/
 - **Composition API** - Vue 3 moderno
 - **Estado local** - Gestión simple con ref/reactive
 - **Comunicación HTTP** - Fetch API nativo
+
+## 🤖 Agentes IA
+
+### Descripción
+
+El proyecto incluye un sistema de agentes IA especializados para tareas de
+desarrollo y gestión de calidad. Cada agente tiene un rol específico y está
+documentado con prompts detallados para garantizar consistencia y eficiencia en
+el trabajo.
+
+### Roles Disponibles
+
+Los agentes están organizados en `agents/roles/` con los siguientes roles
+especializados:
+
+#### 🔧 **Backend Agent** (`backend_prompt.md`)
+
+- Desarrollo y mantenimiento del backend Symfony
+- Implementación de nuevas funcionalidades en la API
+- Refactoring siguiendo principios DDD
+
+#### 🎨 **Frontend Agent** (`frontend_prompt.md`)
+
+- Desarrollo de componentes Vue.js
+- Implementación de interfaces de usuario
+- Integración con la API backend
+
+#### 🔍 **QA Tester Agent** (`qa_tester_prompt.md`)
+
+- Ejecución de suites de testing completas
+- Gestión de status de tareas (PENDING → IN_PROGRESS → COMPLETED/REVISION)
+- Validación de calidad antes de marcar tareas como completadas
+
+#### 🐛 **Debugger Agent** (`debugger_prompt.md`)
+
+- Diagnóstico y corrección de errores
+- Análisis de logs y debugging
+- Optimización de rendimiento
+
+#### 🚀 **DevOps Agent** (`devops_prompt.md`)
+
+- Gestión de contenedores Docker
+- Configuración de entornos
+- Automatización de despliegues
+
+#### 🎯 **Coordinator Agent** (`coordinator_prompt.md`)
+
+- Coordinación entre diferentes agentes
+- Gestión de flujos de trabajo
+- Asignación y seguimiento de tareas
+
+### Estructura de Agentes
+
+```
+agents/
+├── guideline.md              # Guía general para todos los agentes
+├── logs/                     # Logs de ejecución de tests y tareas
+│   ├── phpunit.log
+│   ├── cypress_errors.log
+│   └── README.md
+├── roles/                    # Definición de roles especializados
+│   ├── backend_prompt.md     # Agente de desarrollo backend
+│   ├── coordinator_prompt.md # Agente coordinador
+│   ├── debugger_prompt.md    # Agente de debugging
+│   ├── devops_prompt.md      # Agente de DevOps
+│   ├── frontend_prompt.md    # Agente de desarrollo frontend
+│   └── qa_tester_prompt.md   # Agente de testing y QA
+└── tasks/                    # Tareas asignadas a los agentes
+    ├── task_048_phpunit_fix_jwt_performance.md
+    ├── task_049_phpunit_fix_uuid_format_errors.md
+    └── ... (más tareas)
+```
+
+### Gestión de Tareas
+
+Los agentes siguen un sistema de gestión de tareas con estados claros:
+
+- **PENDING**: Tarea disponible para ser tomada
+- **IN_PROGRESS**: Tarea en desarrollo por un agente
+- **COMPLETED**: Tarea completada sin errores
+- **REVISION**: Tarea completada pero con errores detectados
+
+### Documentación de Agentes
+
+Para más detalles sobre el funcionamiento de los agentes, consulta:
+
+- [📄 Guía General](agents/guideline.md) - Lineamientos para todos los agentes
+- [📁 Roles](agents/roles/) - Documentación específica de cada rol
 
 ## 🗺️ Roadmap
 

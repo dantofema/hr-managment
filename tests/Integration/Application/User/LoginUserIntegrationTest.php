@@ -156,13 +156,12 @@ class LoginUserIntegrationTest extends KernelTestCase
         $email = new Email('integration.test@example.com');
         $plainPassword = 'password123';
         
-        // Create a temporary user to hash the password
-        $tempUser = User::create($email, new HashedPassword('temp'), ['ROLE_USER']);
-        $hashedPassword = $this->passwordHasher->hashPassword($tempUser, $plainPassword);
+        // Use the domain method to create hashed password
+        $hashedPassword = HashedPassword::fromPlainPassword($plainPassword);
         
         $this->testUser = User::create(
             $email,
-            new HashedPassword($hashedPassword),
+            $hashedPassword,
             ['ROLE_USER']
         );
 

@@ -9,9 +9,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Domain\User\User;
+use App\Domain\User\UserRepositoryInterface;
 
 class AuthController extends AbstractController
 {
+    public function __construct(
+        private UserRepositoryInterface $userRepository
+    ) {
+    }
+
     #[Route('/api/login_check', name: 'api_login_check', methods: ['POST'])]
     public function login(#[CurrentUser] ?User $user): JsonResponse
     {
@@ -23,6 +29,9 @@ class AuthController extends AbstractController
 
         // Update last login time
         $user->recordLogin();
+        
+        // Persist the changes to database
+        $this->userRepository->save($user);
 
         return $this->json([
             'user' => [
